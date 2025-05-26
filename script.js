@@ -25,6 +25,8 @@ app.appendChild(canvas);
 
 const ctx = canvas.getContext("2d");
 
+ctx.save();
+
 drawGrid(WIDTH, HEIGHT);
 drawMap();
 
@@ -35,6 +37,7 @@ function drawGrid(width, height) {
             ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
         }
     }
+    ctx.restore();
 }
 
 function drawMap() {
@@ -42,11 +45,12 @@ function drawMap() {
     for (let row = 0; row < gameMap.length; row++) {
         for (let col = 0; col < gameMap[row].length; col++) {
             if (gameMap[row][col] === 0) {
-                ctx.fillStyle = "green";
+                ctx.fillStyle = "#138510";
             } else {
-                ctx.fillStyle = "saddlebrown";
+                ctx.fillStyle = "#907830";
             }
             ctx.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         }
     }
+    ctx.restore();
 }
