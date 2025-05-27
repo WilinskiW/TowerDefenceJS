@@ -1,3 +1,5 @@
+"use strict"
+
 const WIDTH = 1000;
 const HEIGHT = 800;
 const TILE_SIZE = 100;
@@ -28,7 +30,8 @@ const ctx = canvas.getContext("2d");
 ctx.save();
 
 drawGrid(WIDTH, HEIGHT);
-drawMap();
+drawMap(gameMap);
+drawEnemy();
 
 function drawGrid(width, height) {
     ctx.strokeStyle = "black";
@@ -40,7 +43,7 @@ function drawGrid(width, height) {
     ctx.restore();
 }
 
-function drawMap() {
+function drawMap(gameMap) {
     ctx.globalCompositeOperation = "destination-over";
     for (let row = 0; row < gameMap.length; row++) {
         for (let col = 0; col < gameMap[row].length; col++) {
@@ -52,5 +55,19 @@ function drawMap() {
             ctx.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         }
     }
+    ctx.restore();
+}
+
+function drawEnemy(){
+    ctx.globalCompositeOperation = "source-over";
+    
+    ctx.beginPath();
+    ctx.arc(50, 150, 30, 0, 2 * Math.PI);
+    ctx.fillStyle = "red";
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+    
     ctx.restore();
 }
