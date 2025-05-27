@@ -5,7 +5,7 @@ const HEIGHT = 800;
 const TILE_SIZE = 100;
 const ENEMY_SIZE = 30;
 const SPAWN_POS = {row: 1, col: 0};
-const BASE_POS = {row: 0, col: 6}; 
+const BASE_POS = {row: 0, col: 6};
 
 // Game map for 10 x 8
 /*
@@ -35,11 +35,15 @@ app.appendChild(canvas);
 const ctx = canvas.getContext("2d");
 
 ctx.save();
-let enemyX = 50;
-let enemyY = 150;
+const enemy = {
+    x: SPAWN_POS.col * TILE_SIZE + TILE_SIZE / 2,
+    y: SPAWN_POS.row * TILE_SIZE + TILE_SIZE / 2,
+    currentMoveIndex: 0
+};
 
-findPath(SPAWN_POS.row, SPAWN_POS.col);
+const moves = findPath(SPAWN_POS.row, SPAWN_POS.col);
 animateFps(() => drawScene(), 60);
+moveEnemy(moves);
 
 function animateFps(callbackFn, fps = 60) {
     let now;
@@ -53,7 +57,7 @@ function animateFps(callbackFn, fps = 60) {
         delta = now - then;
 
         if (delta > interval) {
-            callbackFn(); 
+            callbackFn();
             then = now - (delta % interval);
         }
     }
@@ -61,11 +65,12 @@ function animateFps(callbackFn, fps = 60) {
     update();
 }
 
-function drawScene(){
+function drawScene() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawGrid(WIDTH, HEIGHT);
     drawMap(gameMap);
-    drawEnemy(enemyX, enemyY);
+    moveEnemy(moves); 
+    drawEnemy(enemy.x, enemy.y);
 }
 
 function drawGrid(width, height) {
@@ -93,9 +98,10 @@ function drawMap(gameMap) {
     ctx.restore();
 }
 
-function drawEnemy(xPos, yPos){
+function drawEnemy(xPos, yPos) {
     ctx.globalCompositeOperation = "source-over";
-    
+    moveEnemy(moves)
+
     ctx.beginPath();
     ctx.arc(xPos, yPos, ENEMY_SIZE, 0, 2 * Math.PI);
     ctx.fillStyle = "red";
@@ -103,23 +109,44 @@ function drawEnemy(xPos, yPos){
     ctx.lineWidth = 2;
     ctx.strokeStyle = "black";
     ctx.stroke();
-    
+
     ctx.restore();
 }
 
-function moveEnemy(xPos, yPos){
-    
+function moveEnemy(moves) {
+    if (enemy.currentMoveIndex >= moves.length) return;
+
+    const move = moves[enemy.currentMoveIndex];
+
+    const targetX = move.col * TILE_SIZE + TILE_SIZE / 2;
+    const targetY = move.row * TILE_SIZE + TILE_SIZE / 2;
+
+    const speed = 1;
+
+    const dx = targetX - enemy.x;
+    const dy = targetY - enemy.y;
+
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < speed) {
+        enemy.x = targetX;
+        enemy.y = targetY;
+        enemy.currentMoveIndex++;
+    } else {
+        enemy.x += (dx / distance) * speed;
+        enemy.y += (dy / distance) * speed;
+    }
 }
 
-function findPath(startRow, startCol){
+function findPath(startRow, startCol) {
     const moves = [];
 
-    if(gameMap[startRow][startCol] === 0){
+    if (gameMap[startRow][startCol] === 0) {
         throw new Error("Cant be placed at grass!");
     }
-    
+
     const isReturnToPreviousMove = (previousMove, row, col) => {
-        if(!previousMove){
+        if (!previousMove) {
             return false;
         }
         return previousMove.col === col && previousMove.row === row;
@@ -132,32 +159,27 @@ function findPath(startRow, startCol){
 
     while (row !== BASE_POS.row || col !== BASE_POS.col) {
         previousMove = moves.at(-2);
-        
+
         // Check NORTH
         if (row - 1 >= 0 && !isReturnToPreviousMove(previousMove, row - 1, col) && gameMap[row - 1][col] === 1) {
             row--;
             moves.push({row, col, xMove: 0, yMove: -TILE_SIZE});
-            console.log("Move: NORTH");
         }
         // Check EAST
         else if (col + 1 < gameMap[0].length && !isReturnToPreviousMove(previousMove, row, col + 1) && gameMap[row][col + 1] === 1) {
             col++;
             moves.push({row, col, xMove: TILE_SIZE, yMove: 0});
-            console.log("Move: EAST");
         }
         // Check SOUTH
         else if (row + 1 < gameMap.length && !isReturnToPreviousMove(previousMove, row + 1, col) && gameMap[row + 1][col] === 1) {
             row++;
             moves.push({row, col, xMove: 0, yMove: TILE_SIZE});
-            console.log("Move: SOUTH");
         }
         // Check WEST 
         else if (col - 1 >= 0 && !isReturnToPreviousMove(previousMove, row, col - 1) && gameMap[row][col - 1] === 1) {
             col--;
             moves.push({row, col, xMove: -TILE_SIZE, yMove: 0});
-            console.log("Move: WEST");
-        }
-        else {
+        } else {
             break;
         }
 
@@ -169,6 +191,6 @@ function findPath(startRow, startCol){
     }
 
     console.log("Moves:", moves);
-    
+
     return moves;
 }
