@@ -5,6 +5,7 @@ import { moveEnemy } from "./enemy.js";
 import { findPath } from "./pathfinding.js";
 import { animateFps, drawEnemy, drawGrid, drawMap, drawTower } from "./renderer.js";
 import { startEnemyWaves, wave } from "./waveManager.js";
+import { Tower } from "./tower.js";
 
 
 const moves = findPath(SPAWN_POS.row, SPAWN_POS.col);
@@ -25,6 +26,7 @@ startEnemyWaves(enemies, wave, (newWave) => waveCounter.textContent = `Wave: ${n
 
 animateFps(() => drawScene(), 60);
 
+let towers = [];
 
 function drawScene() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -38,6 +40,18 @@ function drawScene() {
         moveEnemy(enemy, moves);
         drawEnemy(ctx, enemy.x, enemy.y);
     });
-
-    drawTower(ctx, 150, 250, true);
+    
+    towers.forEach((tower) => {
+        drawTower(ctx, tower.x, tower.y,true);
+    })
 }
+
+let mouseX;
+let mouseY;
+
+canvas.addEventListener("click", (e) => {
+    mouseX = e.clientX - canvas.offsetLeft;
+    mouseY = e.clientY - canvas.offsetTop;
+    
+    towers.push(new Tower(mouseX, mouseY));
+});
