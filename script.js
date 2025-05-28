@@ -6,12 +6,10 @@ const TILE_SIZE = 100;
 const ENEMY_SIZE = 30;
 const SPAWN_POS = {row: 1, col: 0};
 const BASE_POS = {row: 0, col: 6};
+const ENEMIES = 5;
 
 // Game map for 10 x 8
-/*
-       col:
- row: index
-*/
+
 const gameMap = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 1
     [1, 1, 1, 1, 0, 1, 1, 1, 0, 0], // 2
@@ -23,6 +21,7 @@ const gameMap = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  // 8
 ]
 
+const moves = findPath(SPAWN_POS.row, SPAWN_POS.col)
 
 const app = document.getElementById("app");
 
@@ -35,15 +34,47 @@ app.appendChild(canvas);
 const ctx = canvas.getContext("2d");
 
 ctx.save();
-const enemy = {
-    x: SPAWN_POS.col * TILE_SIZE + TILE_SIZE / 2,
-    y: SPAWN_POS.row * TILE_SIZE + TILE_SIZE / 2,
-    currentMoveIndex: 0
-};
 
-const moves = findPath(SPAWN_POS.row, SPAWN_POS.col);
+class Enemy {
+    #x = SPAWN_POS.col * TILE_SIZE + TILE_SIZE / 2;
+    #y = SPAWN_POS.row * TILE_SIZE + TILE_SIZE / 2;
+    #currentMoveIndex = 0
+
+    constructor() {
+    }
+
+    set x(value) {
+        this.#x = value;
+    }
+
+    set y(value) {
+        this.#y = value;
+    }
+
+    set currentMoveIndex(value) {
+        this.#currentMoveIndex = value;
+    }
+
+    get x() {
+        return this.#x;
+    }
+
+    get y() {
+        return this.#y;
+    }
+
+    get currentMoveIndex() {
+        return this.#currentMoveIndex;
+    }
+}
+
+setInterval(() => {
+    enemies.push(new Enemy());
+}, 1000); // 1s
+
+
+let enemies = [new Enemy()];
 animateFps(() => drawScene(), 60);
-moveEnemy(moves);
 
 function animateFps(callbackFn, fps = 60) {
     let now;
@@ -69,8 +100,14 @@ function drawScene() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawGrid(WIDTH, HEIGHT);
     drawMap(gameMap);
-    moveEnemy(moves); 
-    drawEnemy(enemy.x, enemy.y);
+
+    enemies.forEach((enemy) => {
+        if (enemy.x === BASE_POS.row * TILE_SIZE + TILE_SIZE / 2 && enemy.y === BASE_POS.col * TILE_SIZE + TILE_SIZE / 2) {
+            enemies = enemies.filter(enemyEl=> enemyEl !== enemy);
+        }
+        moveEnemy(enemy, moves);
+        drawEnemy(enemy.x, enemy.y);
+    })
 }
 
 function drawGrid(width, height) {
@@ -100,8 +137,6 @@ function drawMap(gameMap) {
 
 function drawEnemy(xPos, yPos) {
     ctx.globalCompositeOperation = "source-over";
-    moveEnemy(moves)
-
     ctx.beginPath();
     ctx.arc(xPos, yPos, ENEMY_SIZE, 0, 2 * Math.PI);
     ctx.fillStyle = "red";
@@ -113,7 +148,7 @@ function drawEnemy(xPos, yPos) {
     ctx.restore();
 }
 
-function moveEnemy(moves) {
+function moveEnemy(enemy, moves) {
     if (enemy.currentMoveIndex >= moves.length) return;
 
     const move = moves[enemy.currentMoveIndex];
@@ -121,7 +156,7 @@ function moveEnemy(moves) {
     const targetX = move.col * TILE_SIZE + TILE_SIZE / 2;
     const targetY = move.row * TILE_SIZE + TILE_SIZE / 2;
 
-    const speed = 1;
+    const speed = 2;
 
     const dx = targetX - enemy.x;
     const dy = targetY - enemy.y;
