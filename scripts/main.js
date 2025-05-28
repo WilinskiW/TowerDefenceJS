@@ -3,7 +3,7 @@
 import { BASE_POS, gameMap, HEIGHT, SPAWN_POS, TILE_SIZE, WIDTH } from "./config.js";
 import { moveEnemy } from "./enemy.js";
 import { findPath } from "./pathfinding.js";
-import { animateFps, drawEnemy, drawGrid, drawMap } from "./renderer.js";
+import { animateFps, drawEnemy, drawGrid, drawMap, drawTower } from "./renderer.js";
 import { startEnemyWaves, wave } from "./waveManager.js";
 
 
@@ -21,7 +21,7 @@ canvas.height = HEIGHT;
 app.appendChild(canvas);
 const ctx = canvas.getContext("2d");
 
-startEnemyWaves(enemies, wave, (newWave) => refreshWaveCounter(waveCounter, newWave));
+startEnemyWaves(enemies, wave, (newWave) => waveCounter.textContent = `Wave: ${newWave}`);
 
 animateFps(() => drawScene(), 60);
 
@@ -37,10 +37,7 @@ function drawScene() {
         }
         moveEnemy(enemy, moves);
         drawEnemy(ctx, enemy.x, enemy.y);
-    })
-}
+    });
 
-
-function refreshWaveCounter(waveCounter, wave){
-    waveCounter.textContent = `Wave: ${wave}`;
+    drawTower(ctx, 150, 250, true);
 }

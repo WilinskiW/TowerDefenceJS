@@ -1,4 +1,4 @@
-import { ENEMY_SIZE, TILE_SIZE } from "./config.js";
+import { ENEMY_SIZE, TILE_SIZE, TOWER_SIZE } from "./config.js";
 
 export function drawGrid(ctx, width, height) {
     ctx.strokeStyle = "black";
@@ -34,6 +34,39 @@ export function drawEnemy(ctx, xPos, yPos) {
     ctx.lineWidth = 2;
     ctx.strokeStyle = "black";
     ctx.stroke();
+
+    ctx.restore();
+}
+
+export function drawTower(ctx, xPos, yPos, showRadius) {
+    ctx.globalCompositeOperation = "source-over";
+    ctx.beginPath();
+    ctx.arc(xPos, yPos, TOWER_SIZE, 0, 2 * Math.PI);
+    ctx.arc(xPos, yPos, TOWER_SIZE / 2, 0, 2 * Math.PI);
+    ctx.fillStyle = "grey";
+    ctx.fill();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+
+    if (showRadius) {
+        drawTowerRadius(ctx, xPos, yPos);
+    }
+
+    ctx.restore();
+}
+
+export function drawTowerRadius(ctx, xPos, yPos) {
+    ctx.globalCompositeOperation = "source-over";
+    ctx.beginPath();
+    ctx.arc(xPos, yPos, TOWER_SIZE * 5, 0, 2 * Math.PI);
+    ctx.fillStyle = "rgb(255 165 0 / 15%)";
+    ctx.fill();
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 10]);
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+    ctx.setLineDash([]);
 
     ctx.restore();
 }
