@@ -1,4 +1,4 @@
-import {BASE_POS, gameMap, TILE_SIZE} from "./config.js";
+import { BASE_POS, gameMap, TILE_SIZE } from "./config.js";
 
 export function findPath(startRow, startCol) {
     const moves = [];

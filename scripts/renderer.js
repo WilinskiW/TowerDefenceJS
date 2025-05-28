@@ -1,4 +1,4 @@
-import {ENEMY_SIZE, TILE_SIZE} from "./config.js";
+import { ENEMY_SIZE, TILE_SIZE } from "./config.js";
 
 export function drawGrid(ctx, width, height) {
     ctx.strokeStyle = "black";
