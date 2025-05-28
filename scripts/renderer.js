@@ -1,0 +1,56 @@
+import {ENEMY_SIZE, TILE_SIZE} from "./config.js";
+
+export function drawGrid(ctx, width, height) {
+    ctx.strokeStyle = "black";
+    for (let x = 0; x <= width; x += TILE_SIZE) {
+        for (let y = 0; y <= height; y += TILE_SIZE) {
+            ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
+        }
+    }
+    ctx.restore();
+}
+
+export function drawMap(ctx, gameMap) {
+    ctx.globalCompositeOperation = "destination-over";
+    for (let row = 0; row < gameMap.length; row++) {
+        for (let col = 0; col < gameMap[row].length; col++) {
+            if (gameMap[row][col] === 0) {
+                ctx.fillStyle = "#138510";
+            } else {
+                ctx.fillStyle = "#907830";
+            }
+            ctx.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        }
+    }
+    ctx.restore();
+}
+
+export function drawEnemy(ctx, xPos, yPos) {
+    ctx.globalCompositeOperation = "source-over";
+    ctx.beginPath();
+    ctx.arc(xPos, yPos, ENEMY_SIZE, 0, 2 * Math.PI);
+    ctx.fillStyle = "red";
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+export function animateFps(callbackFn, fps = 60) {
+    let now, then = Date.now(), delta = 0;
+    const interval = 1000 / fps;
+
+    function update() {
+        requestAnimationFrame(update);
+        now = Date.now();
+        delta = now - then;
+        if (delta > interval) {
+            callbackFn();
+            then = now - (delta % interval);
+        }
+    }
+
+    update();
+}
