@@ -1,15 +1,10 @@
-import { gameMap, TILE_SIZE, TOWER_SIZE } from "./config.js";
-import { canvas } from "./main.js";
-
-let mouseX;
-let mouseY;
-
+import { TILE_SIZE, TOWER_SIZE } from "./config.js";
 export class Tower {
     #x;
     #y;
     #range = TOWER_SIZE * 4;
     #attackSpeed = 0.25;
-    #damage = 1.25;
+    #damage = 1;
     #tier = 1;
     #target = null;
 
@@ -107,7 +102,7 @@ export class Tower {
 
 
     get damage() {
-        return this.#damage;
+        return this.#damage + this.#attackSpeed;
     }
 
     set damage(value) {
@@ -122,68 +117,4 @@ export class Tower {
     set tier(value) {
         this.#tier = value;
     }
-}
-
-export function handleTowerActions(e, towers, selectedButton) {
-    console.log("selected button! ", selectedButton)
-    if (!selectedButton) return;
-
-    mouseX = e.clientX - canvas.offsetLeft;
-    mouseY = e.clientY - canvas.offsetTop;
-
-    const col = Math.floor(mouseX / TILE_SIZE);
-    const x = col * TILE_SIZE + TILE_SIZE / 2;
-
-    const row = Math.floor(mouseY / TILE_SIZE);
-    const y = row * TILE_SIZE + TILE_SIZE / 2;
-
-    switch (selectedButton.id) {
-        case "tower":
-            placeTower(x, y, towers, row, col);
-            break;
-        case "damage":
-            upgradeDamage(x, y, towers);
-            break;
-        case "range":
-            upgradeRange(x, y, towers);
-            break;
-        case "speed":
-            upgradeAttackSpeed(x, y, towers);
-            break;
-    }
-}
-
-function placeTower(x, y, towers, row, col) {
-    if (findTowerByCoordinate(x, y, towers).length === 0 && gameMap[row][col] === 0) {
-        towers.push(new Tower(mouseX, mouseY));
-    }
-}
-
-function upgradeDamage(x, y, towers) {
-    const foundTower = findTowerByCoordinate(x, y, towers);
-    if (foundTower.length === 1 && foundTower[0].tier <= 3) {
-        foundTower[0].increaseDamage(0.5);
-        foundTower[0].tier++;
-    }
-}
-
-function upgradeRange(x, y, towers) {
-    const foundTower = findTowerByCoordinate(x, y, towers);
-    if (foundTower.length === 1 && foundTower[0].tier <= 3) {
-        foundTower[0].increaseRange(TOWER_SIZE * 1.5);
-        foundTower[0].tier++;
-    }
-}
-
-function upgradeAttackSpeed(x, y, towers) {
-    const foundTower = findTowerByCoordinate(x, y, towers);
-    if (foundTower.length === 1 && foundTower[0].tier <= 3) {
-        foundTower[0].increaseAttackSpeed(1);
-        foundTower[0].tier++;
-    }
-}
-
-
-function findTowerByCoordinate(x, y, towers) {
-    return towers.filter(tower => tower.x === x && tower.y === y);
 }

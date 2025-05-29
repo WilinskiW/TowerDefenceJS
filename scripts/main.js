@@ -5,7 +5,7 @@ import { moveEnemy, reachBase } from "./enemy.js";
 import { findPath } from "./pathfinding.js";
 import { animateFps, drawEnemy, drawGrid, drawMap, drawTower, drawTowerBullets } from "./renderer.js";
 import { removeEnemy, startEnemyWaves, wave } from "./waveManager.js";
-import { handleTowerActions } from "./tower.js";
+import { handleTowerActions } from "./towerManager.js";
 
 let gold = 0;
 
