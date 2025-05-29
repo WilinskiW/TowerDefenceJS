@@ -1,34 +1,47 @@
 import { Enemy } from "./enemy.js";
 import { ENEMY_DEFAULT_SPEED, WAVE_BREAK_TIME } from "./config.js";
 
-export let wave = 1;
+export class WaveManager {
+    #wave = 1;
+    
+    constructor() {}
 
-export function startEnemyWaves(enemiesArray, wave, onWaveEnd) {
-    let addedEnemies = 0;
+    startEnemyWaves(enemiesArray, onWaveEnd) {
+        let addedEnemies = 0;
 
-    const spawnInterval = setInterval(() => {
-        if (addedEnemies >= wave * 10) {
-            clearInterval(spawnInterval);
-            
-            const checkIfWaveOver = setInterval(() => {
-                if (enemiesArray.length === 0) {
-                    clearInterval(checkIfWaveOver);
-                    wave++;
-                    setTimeout(() => {
-                        onWaveEnd(wave);
-                        startEnemyWaves(enemiesArray, wave, onWaveEnd);
-                    }, WAVE_BREAK_TIME);
-                }
-            }, 500);
+        const spawnInterval = setInterval(() => {
+            console.log(this.wave)
+            if (addedEnemies >= this.#wave * 10) {
+                clearInterval(spawnInterval);
 
-            return;
-        }
+                const checkIfWaveOver = setInterval(() => {
+                    if (enemiesArray.length === 0) {
+                        clearInterval(checkIfWaveOver);
+                        this.#wave++; 
+                        setTimeout(() => {
+                            onWaveEnd(this.#wave);
+                            this.startEnemyWaves(enemiesArray, onWaveEnd); 
+                        }, WAVE_BREAK_TIME);
+                    }
+                }, 500);
 
-        enemiesArray.push(new Enemy(ENEMY_DEFAULT_SPEED + wave/2, 100 * wave ));
-        addedEnemies++;
-    }, 1000); // spawn co 1s
-}
+                return;
+            }
 
-export function removeEnemy(enemies, enemy){
-    enemies.splice(0, enemies.length, ...enemies.filter(enemyEl => enemyEl !== enemy));
+            enemiesArray.push(new Enemy(ENEMY_DEFAULT_SPEED + this.#wave / 2, 100 * this.#wave));
+            addedEnemies++;
+        }, 1000);
+    }
+
+    removeEnemy(enemies, enemy){
+        enemies.splice(0, enemies.length, ...enemies.filter(enemyEl => enemyEl !== enemy));
+    }
+
+    get wave() {
+        return this.#wave;
+    }
+
+    set wave(value) {
+        this.#wave = value;
+    }
 }

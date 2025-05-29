@@ -1,18 +1,19 @@
 "use strict"
 
-import { BASE_HEALTH, gameMap, HEIGHT, SPAWN_POS, WIDTH } from "./config.js";
+import { BASE_HEALTH, gameMap, HEIGHT, SPAWN_POS, START_GOLD, WIDTH } from "./config.js";
 import { moveEnemy, reachBase } from "./enemy.js";
 import { findPath } from "./pathfinding.js";
 import { animateFps, drawEnemy, drawGameOver, drawGrid, drawMap, drawTower, drawTowerBullets } from "./renderer.js";
-import { removeEnemy, startEnemyWaves, wave } from "./waveManager.js";
+import { WaveManager } from "./waveManager.js";
 import { handleTowerActions } from "./towerManager.js";
 import { GoldSack } from "./goldSack.js";
 
-const goldSack = new GoldSack();
+let goldSack = new GoldSack();
+let waveManager = new WaveManager();
 let baseHealth = BASE_HEALTH;
 
 const waveCounter = document.getElementById("wave");
-waveCounter.textContent = wave;
+waveCounter.textContent = waveManager.wave;
 
 export const goldCounter = document.getElementById("gold");
 goldCounter.textContent = goldSack.amountOfGold;
@@ -25,6 +26,9 @@ let selectedButton;
 buttons.childNodes.forEach(btn => {
     btn.addEventListener("click", () => selectedButton = btn);
 })
+
+const resetBtn = document.getElementById("reset");
+const saveBtn = document.getElementById("save");
 
 // Prepare static grid and map
 const backgroundCanvas = document.createElement("canvas");
@@ -43,13 +47,16 @@ canvas.height = HEIGHT;
 const ctx = canvas.getContext("2d");
 
 const moves = findPath(SPAWN_POS.row, SPAWN_POS.col);
+let animationController;
 let enemies = [];
-
-startEnemyWaves(enemies, wave, (newWave) => waveCounter.textContent = newWave);
-
-animateFps(() => drawScene(), 60);
-
 let towers = [];
+
+startGame();
+
+function startGame(){
+    waveManager.startEnemyWaves(enemies, (newWave) => waveCounter.textContent = newWave);
+    animationController = animateFps(() => drawScene(), 60);
+}
 
 function drawScene() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -58,13 +65,13 @@ function drawScene() {
     if (baseHealth > 0) {
         enemies.forEach((enemy) => {
             if (reachBase(enemy)) {
-                removeEnemy(enemies, enemy);
+                waveManager.removeEnemy(enemies, enemy);
                 baseHealth -= 20;
                 baseHealthEl.textContent = baseHealth;
             }
 
             if (enemy.health <= 0) {
-                removeEnemy(enemies, enemy);
+                waveManager.removeEnemy(enemies, enemy);
                 goldSack.amountOfGold++;
                 goldCounter.textContent = goldSack.amountOfGold;
             }
@@ -88,9 +95,23 @@ function drawScene() {
     }
 }
 
+function resetGame(){
+    goldSack.amountOfGold = START_GOLD;
+    baseHealth = BASE_HEALTH;
+    animationController.stop();
+    waveManager.wave = 1;
+    enemies = [];
+    towers = [];
+    waveCounter.textContent = waveManager.wave;
+    baseHealthEl.textContent = baseHealth;
+    startGame();
+}
+
 // debounce click
 let debounceClick;
 canvas.addEventListener("click", (e) => {
     clearTimeout(debounceClick);
     debounceClick = setTimeout(() => handleTowerActions(e, towers, selectedButton, goldSack), 200); // 200ms
 });
+
+resetBtn.addEventListener("click", () => resetGame());

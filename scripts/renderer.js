@@ -109,9 +109,10 @@ export function drawGameOver(ctx) {
 export function animateFps(callbackFn, fps = 60) {
     let now, then = Date.now(), delta = 0;
     const interval = 1000 / fps;
+    let animationFrameId;
 
     function update() {
-        requestAnimationFrame(update);
+        animationFrameId = requestAnimationFrame(update);
         now = Date.now();
         delta = now - then;
         if (delta > interval) {
@@ -121,4 +122,8 @@ export function animateFps(callbackFn, fps = 60) {
     }
 
     update();
+
+    return {
+        stop: () => cancelAnimationFrame(animationFrameId)
+    };
 }
