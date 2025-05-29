@@ -8,7 +8,21 @@
     <script type="module" src="scripts/main.js"></script>
 </head>
 <body>
-<div id="app"></div>
+<div class="game">
+    <div class="sidebar">
+        <div class="info">
+            <p>Wave: <span id="wave"></span></p>
+            <p>Gold: <span id="gold"></span></p>
+        </div>
+        <div class="actions">
+            <button>Upgrade damage</button>
+            <button>Upgrade range</button>
+            <button>Upgrade attack speed</button>
+            <button>Build new tower</button>
+        </div>
+    </div>
+    <canvas id="scene"></canvas>
+</div>
 </body>
 </html>
 

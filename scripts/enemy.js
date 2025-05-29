@@ -1,44 +1,53 @@
-import { TILE_SIZE, SPAWN_POS, ENEMY_DEFAULT_SPEED } from "./config.js";
+import { TILE_SIZE, SPAWN_POS, ENEMY_DEFAULT_SPEED, BASE_POS } from "./config.js";
 
 export class Enemy {
     #x = SPAWN_POS.col * TILE_SIZE + TILE_SIZE / 2;
     #y = SPAWN_POS.row * TILE_SIZE + TILE_SIZE / 2;
     #currentMoveIndex = 0
     #speed = ENEMY_DEFAULT_SPEED;
+    #health = 100;
 
     constructor() {
-    }
-
-    set x(value) {
-        this.#x = value;
-    }
-
-    set y(value) {
-        this.#y = value;
-    }
-
-    set currentMoveIndex(value) {
-        this.#currentMoveIndex = value;
-    }
-
-    set speed(value) {
-        this.#speed = value;
     }
 
     get x() {
         return this.#x;
     }
 
+    set x(value) {
+        this.#x = value;
+    }
+
     get y() {
         return this.#y;
+    }
+
+    set y(value) {
+        this.#y = value;
+    }
+
+    get currentMoveIndex() {
+        return this.#currentMoveIndex;
+    }
+
+    set currentMoveIndex(value) {
+        this.#currentMoveIndex = value;
     }
 
     get speed() {
         return this.#speed;
     }
 
-    get currentMoveIndex() {
-        return this.#currentMoveIndex;
+    set speed(value) {
+        this.#speed = value;
+    }
+
+    get health() {
+        return this.#health;
+    }
+
+    set health(value) {
+        this.#health = value;
     }
 }
 
@@ -63,4 +72,8 @@ export function moveEnemy(enemy, moves) {
         enemy.x += (dx / distance) * enemy.speed;
         enemy.y += (dy / distance) * enemy.speed;
     }
+}
+
+export function reachBase(enemy){
+    return enemy.x === BASE_POS.row * TILE_SIZE + TILE_SIZE / 2 && enemy.y === BASE_POS.col * TILE_SIZE + TILE_SIZE / 2;
 }

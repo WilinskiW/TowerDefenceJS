@@ -1,4 +1,4 @@
-canvas {
+#scene {
   position: absolute;
   top: 0;
   left: 0;
@@ -7,3 +7,19 @@ canvas {
   margin: auto;
   border:2px solid black;
 }
+
+.sidebar, .info, .actions {
+  display: flex;
+  flex-direction: column;
+}
+
+p {
+  margin: 2px;
+}
+
+button {
+  display: block;
+  width: fit-content;
+  margin-bottom: 0.5rem;
+}
+

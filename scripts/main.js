@@ -1,7 +1,7 @@
 "use strict"
 
-import { BASE_POS, gameMap, HEIGHT, SPAWN_POS, TILE_SIZE, WIDTH } from "./config.js";
-import { moveEnemy } from "./enemy.js";
+import { gameMap, HEIGHT, SPAWN_POS, TILE_SIZE, WIDTH } from "./config.js";
+import { moveEnemy, reachBase } from "./enemy.js";
 import { findPath } from "./pathfinding.js";
 import { animateFps, drawEnemy, drawGrid, drawMap, drawTower, drawTowerBullets } from "./renderer.js";
 import { startEnemyWaves, wave } from "./waveManager.js";
@@ -10,19 +10,20 @@ import { Tower } from "./tower.js";
 
 const moves = findPath(SPAWN_POS.row, SPAWN_POS.col);
 let enemies = [];
+let gold = 0;
 
-const app = document.getElementById("app");
-const waveCounter = document.createElement("span");
-waveCounter.textContent = `Wave: ${wave}`;
-app.appendChild(waveCounter);
+const waveCounter = document.getElementById("wave");
+waveCounter.textContent = wave;
 
-const canvas = document.createElement("canvas");
+const goldCounter = document.getElementById("gold");
+goldCounter.textContent = gold;
+
+const canvas = document.getElementById("scene");
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
-app.appendChild(canvas);
 const ctx = canvas.getContext("2d");
 
-startEnemyWaves(enemies, wave, (newWave) => waveCounter.textContent = `Wave: ${newWave}`);
+startEnemyWaves(enemies, wave, (newWave) => waveCounter.textContent = newWave);
 
 animateFps(() => drawScene(), 60);
 
@@ -34,9 +35,17 @@ function drawScene() {
     drawMap(ctx, gameMap);
 
     enemies.forEach((enemy) => {
-        if (enemy.x === BASE_POS.row * TILE_SIZE + TILE_SIZE / 2 && enemy.y === BASE_POS.col * TILE_SIZE + TILE_SIZE / 2) {
-            enemies.splice(0, enemies.length, ...enemies.filter(enemyEl => enemyEl !== enemy));
+        if (reachBase(enemy)) {
+            removeEnemy(enemies, enemy)
+            console.log("Dotarłem do bazy!!!")
         }
+
+        if(enemy.health <= 0){
+            removeEnemy(enemies, enemy);
+            gold++;
+            goldCounter.textContent = gold;
+        }
+        
         moveEnemy(enemy, moves);
         drawEnemy(ctx, enemy.x, enemy.y);
     });
@@ -44,7 +53,6 @@ function drawScene() {
     towers.forEach((tower) => {
         if (tower.target) {
             tower.shootEnemy();
-            
             if(tower.target) drawTowerBullets(ctx, tower.x, tower.y, tower.target.x, tower.target.y); // again null check
         }
         else{
@@ -54,6 +62,10 @@ function drawScene() {
     })
 }
 
+function removeEnemy(enemies, enemy){
+    enemies.splice(0, enemies.length, ...enemies.filter(enemyEl => enemyEl !== enemy));
+}
+
 let mouseX;
 let mouseY;
 
@@ -61,5 +73,15 @@ canvas.addEventListener("click", (e) => {
     mouseX = e.clientX - canvas.offsetLeft;
     mouseY = e.clientY - canvas.offsetTop;
 
-    towers.push(new Tower(mouseX, mouseY));
+    const col = Math.floor(mouseX / TILE_SIZE);
+    const x = col * TILE_SIZE + TILE_SIZE / 2;
+
+    const row = Math.floor(mouseY /  TILE_SIZE);
+    const y= row * TILE_SIZE + TILE_SIZE / 2;
+    
+    const tileFree = towers.filter(tower => tower.x === x && tower.y === y).length === 0;
+    
+    if(tileFree && gameMap[row][col] === 0){
+        towers.push(new Tower(mouseX, mouseY));    
+    }
 });

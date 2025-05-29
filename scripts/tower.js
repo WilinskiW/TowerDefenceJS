@@ -3,10 +3,11 @@ import { TILE_SIZE, TOWER_SIZE } from "./config.js";
 export class Tower {
     #x;
     #y;
-    #range = TOWER_SIZE * 4;
+    #range = TOWER_SIZE * 6;
     #shootSpeed = 1;
+    #damage = 1.25;
     #target = null;
-
+    
     constructor(x, y) {
         this.#x = this.#adjustX(x);
         this.#y = this.#adjustY(y);
@@ -23,7 +24,8 @@ export class Tower {
     }
 
     shootEnemy() {
-        if(this.target && this.#isInTheZone(this.target)){
+        if(this.target && this.#isInTheZone(this.target) && this.target.health > 0){
+            this.target.health -= this.damage;
             console.log(`TARGET: x: ${this.target.x}, y: ${this.target.y}`);
         }
         else {
@@ -87,5 +89,14 @@ export class Tower {
 
     set target(value) {
         this.#target = value;
+    }
+
+
+    get damage() {
+        return this.#damage;
+    }
+
+    set damage(value) {
+        this.#damage = value;
     }
 }
