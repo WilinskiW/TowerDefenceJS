@@ -1,15 +1,12 @@
 "use strict"
 
-import { gameMap, HEIGHT, SPAWN_POS, TILE_SIZE, WIDTH } from "./config.js";
+import { gameMap, HEIGHT, SPAWN_POS, WIDTH } from "./config.js";
 import { moveEnemy, reachBase } from "./enemy.js";
 import { findPath } from "./pathfinding.js";
 import { animateFps, drawEnemy, drawGrid, drawMap, drawTower, drawTowerBullets } from "./renderer.js";
-import { startEnemyWaves, wave } from "./waveManager.js";
-import { Tower } from "./tower.js";
+import { removeEnemy, startEnemyWaves, wave } from "./waveManager.js";
+import { handleTowerActions } from "./tower.js";
 
-
-const moves = findPath(SPAWN_POS.row, SPAWN_POS.col);
-let enemies = [];
 let gold = 0;
 
 const waveCounter = document.getElementById("wave");
@@ -18,10 +15,19 @@ waveCounter.textContent = wave;
 const goldCounter = document.getElementById("gold");
 goldCounter.textContent = gold;
 
-const canvas = document.getElementById("scene");
+const buttons = document.getElementById("actions");
+let selectedButton;
+buttons.childNodes.forEach(btn => {
+    btn.addEventListener("click", () => selectedButton = btn);
+})
+
+export const canvas = document.getElementById("scene");
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
 const ctx = canvas.getContext("2d");
+
+const moves = findPath(SPAWN_POS.row, SPAWN_POS.col);
+let enemies = [];
 
 startEnemyWaves(enemies, wave, (newWave) => waveCounter.textContent = newWave);
 
@@ -53,35 +59,13 @@ function drawScene() {
     towers.forEach((tower) => {
         if (tower.target) {
             tower.shootEnemy();
-            if(tower.target) drawTowerBullets(ctx, tower.x, tower.y, tower.target.x, tower.target.y); // again null check
+            if(tower.target) drawTowerBullets(ctx, tower.x, tower.y, tower.target.x, tower.target.y, tower.attackSpeed); // again null check
         }
         else{
             tower.findTarget(enemies);
         }
-        drawTower(ctx, tower.x, tower.y, true);
+        drawTower(ctx, tower.x, tower.y, tower.range,true);
     })
 }
 
-function removeEnemy(enemies, enemy){
-    enemies.splice(0, enemies.length, ...enemies.filter(enemyEl => enemyEl !== enemy));
-}
-
-let mouseX;
-let mouseY;
-
-canvas.addEventListener("click", (e) => {
-    mouseX = e.clientX - canvas.offsetLeft;
-    mouseY = e.clientY - canvas.offsetTop;
-
-    const col = Math.floor(mouseX / TILE_SIZE);
-    const x = col * TILE_SIZE + TILE_SIZE / 2;
-
-    const row = Math.floor(mouseY /  TILE_SIZE);
-    const y= row * TILE_SIZE + TILE_SIZE / 2;
-    
-    const tileFree = towers.filter(tower => tower.x === x && tower.y === y).length === 0;
-    
-    if(tileFree && gameMap[row][col] === 0){
-        towers.push(new Tower(mouseX, mouseY));    
-    }
-});
+canvas.addEventListener("click", (e) => handleTowerActions(e, towers, selectedButton));

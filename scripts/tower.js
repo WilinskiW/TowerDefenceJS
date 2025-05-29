@@ -1,13 +1,18 @@
-import { TILE_SIZE, TOWER_SIZE } from "./config.js";
+import { gameMap, TILE_SIZE, TOWER_SIZE } from "./config.js";
+import { canvas } from "./main.js";
+
+let mouseX;
+let mouseY;
 
 export class Tower {
     #x;
     #y;
-    #range = TOWER_SIZE * 6;
-    #shootSpeed = 1;
+    #range = TOWER_SIZE * 4;
+    #attackSpeed = 0.25;
     #damage = 1.25;
+    #tier = 1;
     #target = null;
-    
+
     constructor(x, y) {
         this.#x = this.#adjustX(x);
         this.#y = this.#adjustY(y);
@@ -16,7 +21,7 @@ export class Tower {
     findTarget(enemies) {
         enemies.forEach((enemy) => {
             if (this.#isInTheZone(enemy)) {
-                if(!this.#target){
+                if (!this.#target) {
                     this.#target = enemy;
                 }
             }
@@ -24,14 +29,23 @@ export class Tower {
     }
 
     shootEnemy() {
-        if(this.target && this.#isInTheZone(this.target) && this.target.health > 0){
+        if (this.target && this.#isInTheZone(this.target) && this.target.health > 0) {
             this.target.health -= this.damage;
-            console.log(`TARGET: x: ${this.target.x}, y: ${this.target.y}`);
-        }
-        else {
-            console.log("Lose sight of target");
+        } else {
             this.target = null;
         }
+    }
+
+    increaseDamage(value) {
+        this.damage += value;
+    }
+
+    increaseRange(value) {
+        this.range += value;
+    }
+
+    increaseAttackSpeed(value) {
+        this.#attackSpeed += value;
     }
 
     #isInTheZone(enemy) {
@@ -75,12 +89,12 @@ export class Tower {
         this.#range = value;
     }
 
-    get shootSpeed() {
-        return this.#shootSpeed;
+    get attackSpeed() {
+        return this.#attackSpeed;
     }
 
-    set shootSpeed(value) {
-        this.#shootSpeed = value;
+    set attackSpeed(value) {
+        this.#attackSpeed = value;
     }
 
     get target() {
@@ -99,4 +113,77 @@ export class Tower {
     set damage(value) {
         this.#damage = value;
     }
+
+
+    get tier() {
+        return this.#tier;
+    }
+
+    set tier(value) {
+        this.#tier = value;
+    }
+}
+
+export function handleTowerActions(e, towers, selectedButton) {
+    console.log("selected button! ", selectedButton)
+    if (!selectedButton) return;
+
+    mouseX = e.clientX - canvas.offsetLeft;
+    mouseY = e.clientY - canvas.offsetTop;
+
+    const col = Math.floor(mouseX / TILE_SIZE);
+    const x = col * TILE_SIZE + TILE_SIZE / 2;
+
+    const row = Math.floor(mouseY / TILE_SIZE);
+    const y = row * TILE_SIZE + TILE_SIZE / 2;
+
+    switch (selectedButton.id) {
+        case "tower":
+            placeTower(x, y, towers, row, col);
+            break;
+        case "damage":
+            upgradeDamage(x, y, towers);
+            break;
+        case "range":
+            upgradeRange(x, y, towers);
+            break;
+        case "speed":
+            upgradeAttackSpeed(x, y, towers);
+            break;
+    }
+}
+
+function placeTower(x, y, towers, row, col) {
+    if (findTowerByCoordinate(x, y, towers).length === 0 && gameMap[row][col] === 0) {
+        towers.push(new Tower(mouseX, mouseY));
+    }
+}
+
+function upgradeDamage(x, y, towers) {
+    const foundTower = findTowerByCoordinate(x, y, towers);
+    if (foundTower.length === 1 && foundTower[0].tier <= 3) {
+        foundTower[0].increaseDamage(0.5);
+        foundTower[0].tier++;
+    }
+}
+
+function upgradeRange(x, y, towers) {
+    const foundTower = findTowerByCoordinate(x, y, towers);
+    if (foundTower.length === 1 && foundTower[0].tier <= 3) {
+        foundTower[0].increaseRange(TOWER_SIZE * 1.5);
+        foundTower[0].tier++;
+    }
+}
+
+function upgradeAttackSpeed(x, y, towers) {
+    const foundTower = findTowerByCoordinate(x, y, towers);
+    if (foundTower.length === 1 && foundTower[0].tier <= 3) {
+        foundTower[0].increaseAttackSpeed(1);
+        foundTower[0].tier++;
+    }
+}
+
+
+function findTowerByCoordinate(x, y, towers) {
+    return towers.filter(tower => tower.x === x && tower.y === y);
 }

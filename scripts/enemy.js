@@ -7,7 +7,9 @@ export class Enemy {
     #speed = ENEMY_DEFAULT_SPEED;
     #health = 100;
 
-    constructor() {
+    constructor(speed, health) {
+        this.#speed = speed;
+        this.#health = health;
     }
 
     get x() {

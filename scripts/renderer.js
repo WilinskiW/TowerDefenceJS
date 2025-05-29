@@ -39,7 +39,7 @@ export function drawEnemy(ctx, xPos, yPos) {
     ctx.restore();
 }
 
-export function drawTower(ctx, xPos, yPos, showRadius) {
+export function drawTower(ctx, xPos, yPos, range,showRadius) {
     ctx.globalCompositeOperation = "source-over";
     ctx.beginPath();
     ctx.arc(xPos, yPos, TOWER_SIZE, 0, 2 * Math.PI);
@@ -51,16 +51,16 @@ export function drawTower(ctx, xPos, yPos, showRadius) {
     ctx.stroke();
 
     if (showRadius) {
-        drawTowerRadius(ctx, xPos, yPos);
+        drawTowerRadius(ctx, xPos, yPos, range);
     }
 
     ctx.restore();
 }
 
-export function drawTowerRadius(ctx, xPos, yPos) {
+export function drawTowerRadius(ctx, xPos, yPos, range) {
     ctx.globalCompositeOperation = "source-over";
     ctx.beginPath();
-    ctx.arc(xPos, yPos, TOWER_SIZE * 5, 0, 2 * Math.PI);
+    ctx.arc(xPos, yPos, range, 0, 2 * Math.PI);
     ctx.fillStyle = "rgb(255 165 0 / 15%)";
     ctx.fill();
     ctx.lineWidth = 1;
@@ -72,12 +72,12 @@ export function drawTowerRadius(ctx, xPos, yPos) {
     ctx.restore();
 }
 
-export function drawTowerBullets(ctx, xSource, ySource, xDestination, yDestination){
+export function drawTowerBullets(ctx, xSource, ySource, xDestination, yDestination, speed){
     ctx.globalCompositeOperation = "source-over";
     ctx.beginPath();
     ctx.setLineDash([bulletSpeed, 15]);
 
-    bulletSpeed += 0.25;
+    bulletSpeed += speed;
     
     bulletSpeed = bulletSpeed > 5 ? bulletSpeed = 0 : bulletSpeed;
 

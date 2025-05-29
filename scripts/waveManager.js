@@ -1,5 +1,5 @@
 import { Enemy } from "./enemy.js";
-import { WAVE_BREAK_TIME } from "./config.js";
+import { ENEMY_DEFAULT_SPEED, WAVE_BREAK_TIME } from "./config.js";
 
 export let wave = 1;
 
@@ -24,7 +24,11 @@ export function startEnemyWaves(enemiesArray, wave, onWaveEnd) {
             return;
         }
 
-        enemiesArray.push(new Enemy());
+        enemiesArray.push(new Enemy(ENEMY_DEFAULT_SPEED + wave/2, 100 * wave ));
         addedEnemies++;
     }, 1000); // spawn co 1s
+}
+
+export function removeEnemy(enemies, enemy){
+    enemies.splice(0, enemies.length, ...enemies.filter(enemyEl => enemyEl !== enemy));
 }
