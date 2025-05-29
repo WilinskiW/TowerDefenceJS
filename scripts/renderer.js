@@ -1,10 +1,11 @@
 import { ENEMY_SIZE, TILE_SIZE, TOWER_SIZE } from "./config.js";
+import { canvas } from "./main.js";
 
 let bulletSpeed = 1
-export function drawGrid(ctx, width, height) {
+export function drawGrid(ctx) {
     ctx.strokeStyle = "black";
-    for (let x = 0; x <= width; x += TILE_SIZE) {
-        for (let y = 0; y <= height; y += TILE_SIZE) {
+    for (let x = 0; x <= canvas.width; x += TILE_SIZE) {
+        for (let y = 0; y <= canvas.height; y += TILE_SIZE) {
             ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
         }
     }
@@ -86,6 +87,23 @@ export function drawTowerBullets(ctx, xSource, ySource, xDestination, yDestinati
     ctx.stroke();
 
     ctx.setLineDash([]);
+}
+
+export function drawGameOver(ctx) {
+    const { width, height } = ctx.canvas;
+
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.fillStyle = "red";
+    ctx.font = "bold 48px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.fillText("Game Over", width / 2, height / 2);
+    
+    ctx.restore();
 }
 
 export function animateFps(callbackFn, fps = 60) {

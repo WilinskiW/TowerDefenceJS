@@ -1,5 +1,6 @@
 export const WIDTH = 1000;
 export const HEIGHT = 800;
+export const BASE_HEALTH = 100;
 export const TILE_SIZE = 100;
 export const ENEMY_SIZE = 30;
 export const TOWER_SIZE = 30;
