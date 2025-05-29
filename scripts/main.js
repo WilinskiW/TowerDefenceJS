@@ -25,6 +25,17 @@ buttons.childNodes.forEach(btn => {
     btn.addEventListener("click", () => selectedButton = btn);
 })
 
+// Prepare static grid and map
+const backgroundCanvas = document.createElement("canvas");
+backgroundCanvas.width = WIDTH;
+backgroundCanvas.height = HEIGHT;
+const bgCtx = backgroundCanvas.getContext("2d");
+
+drawGrid(bgCtx);
+drawMap(bgCtx, gameMap);
+
+// Prepare scene
+
 export const canvas = document.getElementById("scene");
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
@@ -41,13 +52,12 @@ let towers = [];
 
 function drawScene() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawGrid(ctx);
-    drawMap(ctx, gameMap);
+    ctx.drawImage(backgroundCanvas, 0, 0); 
 
     if (baseHealth > 0) {
         enemies.forEach((enemy) => {
             if (reachBase(enemy)) {
-                removeEnemy(enemies, enemy)
+                removeEnemy(enemies, enemy);
                 baseHealth -= 20;
                 baseHealthEl.textContent = baseHealth;
             }
@@ -65,16 +75,21 @@ function drawScene() {
         towers.forEach((tower) => {
             if (tower.target) {
                 tower.shootEnemy();
-                if (tower.target) drawTowerBullets(ctx, tower.x, tower.y, tower.target.x, tower.target.y, tower.attackSpeed); // again null check
+                if (tower.target)
+                    drawTowerBullets(ctx, tower.x, tower.y, tower.target.x, tower.target.y, tower.attackSpeed);
             } else {
                 tower.findTarget(enemies);
             }
             drawTower(ctx, tower.x, tower.y, tower.range, true);
         });
-    }
-    else {
-       drawGameOver(ctx);
+    } else {
+        drawGameOver(ctx);
     }
 }
 
-canvas.addEventListener("click", (e) => handleTowerActions(e, towers, selectedButton));
+// debounce click
+let debounceClick;
+canvas.addEventListener("click", (e) => {
+    clearTimeout(debounceClick);
+    debounceClick = setTimeout(() => handleTowerActions(e, towers, selectedButton), 200); // 200ms
+});

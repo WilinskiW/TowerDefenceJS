@@ -1,11 +1,11 @@
 import { ENEMY_SIZE, TILE_SIZE, TOWER_SIZE } from "./config.js";
-import { canvas } from "./main.js";
 
 let bulletSpeed = 1
 export function drawGrid(ctx) {
+    ctx.globalCompositeOperation = "destination-over";
     ctx.strokeStyle = "black";
-    for (let x = 0; x <= canvas.width; x += TILE_SIZE) {
-        for (let y = 0; y <= canvas.height; y += TILE_SIZE) {
+    for (let x = 0; x <= ctx.canvas.width; x += TILE_SIZE) {
+        for (let y = 0; y <= ctx.canvas.height; y += TILE_SIZE) {
             ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
         }
     }
