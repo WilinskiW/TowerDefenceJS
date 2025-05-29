@@ -1,9 +1,18 @@
 import { canvas } from "./main.js";
-import { gameMap, TILE_SIZE, TOWER_SIZE } from "./config.js";
+import {
+    DAMAGE_UPGRADE_COST,
+    gameMap,
+    minCost,
+    RANGE_UPGRADE_COST,
+    ATTACK_SPEED_UPGRADE_COST,
+    TILE_SIZE,
+    TOWER_SIZE, NEW_TOWER_COST
+} from "./config.js";
 import { Tower } from "./tower.js";
+import { goldCounter } from "./main.js";
 
-export function handleTowerActions(e, towers, selectedButton) {
-    if (!selectedButton) return;
+export function handleTowerActions(e, towers, selectedButton, goldSack) {
+    if (!selectedButton || goldSack.amountOfGold < minCost()) return;
 
     const mouseX = e.clientX - canvas.offsetLeft;
     const mouseY = e.clientY - canvas.offsetTop;
@@ -14,38 +23,52 @@ export function handleTowerActions(e, towers, selectedButton) {
     const x = col * TILE_SIZE + TILE_SIZE / 2;
     const y = row * TILE_SIZE + TILE_SIZE / 2;
 
-    if (selectedButton.id === "tower") {
-        placeTower(x, y, towers, row, col, mouseX, mouseY);
+    if (selectedButton.id === "tower" && goldSack.amountOfGold >= NEW_TOWER_COST) {
+        placeTower(x, y, towers, row, col, mouseX, mouseY, goldSack);
     } else {
-        upgradeTower(x, y, towers, selectedButton.id);
+        upgradeTower(x, y, towers, selectedButton.id, goldSack);
     }
 }
 
-function placeTower(x, y, towers, row, col, rawX, rawY) {
+function placeTower(x, y, towers, row, col, rawX, rawY, goldSack) {
     if (findTowerByCoordinate(x, y, towers).length === 0 && gameMap[row][col] === 0) {
         towers.push(new Tower(rawX, rawY));
+        spendGold(goldSack, NEW_TOWER_COST);
     }
 }
 
-function upgradeTower(x, y, towers, upgradeType) {
+function upgradeTower(x, y, towers, upgradeType, goldSack) {
     const foundTower = findTowerByCoordinate(x, y, towers);
     if (foundTower.length === 1 && foundTower[0].tier <= 3) {
         const tower = foundTower[0];
         switch (upgradeType) {
             case "damage":
-                tower.increaseDamage(0.5);
+                if (goldSack.amountOfGold >= DAMAGE_UPGRADE_COST) {
+                    tower.increaseDamage(0.5);
+                    spendGold(goldSack, DAMAGE_UPGRADE_COST);
+                }
                 break;
             case "range":
-                tower.increaseRange(TOWER_SIZE * 1.5);
+                if (goldSack.amountOfGold >= RANGE_UPGRADE_COST) {
+                    tower.increaseRange(TOWER_SIZE * 1.5);
+                    spendGold(goldSack, RANGE_UPGRADE_COST);
+                }
                 break;
             case "speed":
-                tower.increaseAttackSpeed(1);
+                if (goldSack.amountOfGold >= ATTACK_SPEED_UPGRADE_COST) {
+                    tower.increaseAttackSpeed(1);
+                    spendGold(goldSack, ATTACK_SPEED_UPGRADE_COST);
+                }
                 break;
         }
         tower.tier++;
     }
 }
 
+function spendGold(goldSack, toTake){
+    goldSack.amountOfGold -= toTake;
+    goldCounter.textContent = goldSack.amountOfGold;
+}
 
 function findTowerByCoordinate(x, y, towers) {
     return towers.filter(tower => tower.x === x && tower.y === y);

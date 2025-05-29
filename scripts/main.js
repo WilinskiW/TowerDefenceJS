@@ -6,15 +6,16 @@ import { findPath } from "./pathfinding.js";
 import { animateFps, drawEnemy, drawGameOver, drawGrid, drawMap, drawTower, drawTowerBullets } from "./renderer.js";
 import { removeEnemy, startEnemyWaves, wave } from "./waveManager.js";
 import { handleTowerActions } from "./towerManager.js";
+import { GoldSack } from "./goldSack.js";
 
-let gold = 0;
+const goldSack = new GoldSack();
 let baseHealth = BASE_HEALTH;
 
 const waveCounter = document.getElementById("wave");
 waveCounter.textContent = wave;
 
-const goldCounter = document.getElementById("gold");
-goldCounter.textContent = gold;
+export const goldCounter = document.getElementById("gold");
+goldCounter.textContent = goldSack.amountOfGold;
 
 const baseHealthEl = document.getElementById("base");
 baseHealthEl.textContent = baseHealth;
@@ -64,8 +65,8 @@ function drawScene() {
 
             if (enemy.health <= 0) {
                 removeEnemy(enemies, enemy);
-                gold++;
-                goldCounter.textContent = gold;
+                goldSack.amountOfGold++;
+                goldCounter.textContent = goldSack.amountOfGold;
             }
 
             moveEnemy(enemy, moves);
@@ -91,5 +92,5 @@ function drawScene() {
 let debounceClick;
 canvas.addEventListener("click", (e) => {
     clearTimeout(debounceClick);
-    debounceClick = setTimeout(() => handleTowerActions(e, towers, selectedButton), 200); // 200ms
+    debounceClick = setTimeout(() => handleTowerActions(e, towers, selectedButton, goldSack), 200); // 200ms
 });

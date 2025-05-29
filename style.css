@@ -8,7 +8,7 @@
   border: 2px solid black;
 }
 
-.sidebar, .info, .actions {
+.sidebar, .info, .actions, .options {
   display: flex;
   flex-direction: column;
 }

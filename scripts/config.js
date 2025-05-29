@@ -8,6 +8,15 @@ export const SPAWN_POS = {row: 1, col: 0};
 export const BASE_POS = {row: 0, col: 6};
 export const WAVE_BREAK_TIME = 30000; //ms
 export const ENEMY_DEFAULT_SPEED = 1.5;
+export const START_GOLD = 10;
+export const NEW_TOWER_COST = 10;
+export const DAMAGE_UPGRADE_COST = 5;
+export const ATTACK_SPEED_UPGRADE_COST = 4;
+export const RANGE_UPGRADE_COST = 3;
+
+export function minCost(){
+    return Math.min(NEW_TOWER_COST, DAMAGE_UPGRADE_COST, ATTACK_SPEED_UPGRADE_COST, RANGE_UPGRADE_COST);
+}
 
 
 // Game map for 10 x 8

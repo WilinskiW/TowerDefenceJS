@@ -52,7 +52,5 @@ export function findPath(startRow, startCol) {
         }
     }
 
-    console.log("Moves:", moves);
-
     return moves;
 }
