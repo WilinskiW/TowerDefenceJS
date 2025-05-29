@@ -3,7 +3,7 @@
 import { BASE_POS, gameMap, HEIGHT, SPAWN_POS, TILE_SIZE, WIDTH } from "./config.js";
 import { moveEnemy } from "./enemy.js";
 import { findPath } from "./pathfinding.js";
-import { animateFps, drawEnemy, drawGrid, drawMap, drawTower } from "./renderer.js";
+import { animateFps, drawEnemy, drawGrid, drawMap, drawTower, drawTowerBullets } from "./renderer.js";
 import { startEnemyWaves, wave } from "./waveManager.js";
 import { Tower } from "./tower.js";
 
@@ -40,9 +40,17 @@ function drawScene() {
         moveEnemy(enemy, moves);
         drawEnemy(ctx, enemy.x, enemy.y);
     });
-    
+
     towers.forEach((tower) => {
-        drawTower(ctx, tower.x, tower.y,true);
+        if (tower.target) {
+            tower.shootEnemy();
+            
+            if(tower.target) drawTowerBullets(ctx, tower.x, tower.y, tower.target.x, tower.target.y); // again null check
+        }
+        else{
+            tower.findTarget(enemies);
+        }
+        drawTower(ctx, tower.x, tower.y, true);
     })
 }
 
@@ -52,6 +60,6 @@ let mouseY;
 canvas.addEventListener("click", (e) => {
     mouseX = e.clientX - canvas.offsetLeft;
     mouseY = e.clientY - canvas.offsetTop;
-    
+
     towers.push(new Tower(mouseX, mouseY));
 });

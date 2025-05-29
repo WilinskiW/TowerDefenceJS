@@ -5,19 +5,46 @@ export class Tower {
     #y;
     #range = TOWER_SIZE * 4;
     #shootSpeed = 1;
-
+    #target = null;
 
     constructor(x, y) {
         this.#x = this.#adjustX(x);
         this.#y = this.#adjustY(y);
     }
-    
-    #adjustX(x){
+
+    findTarget(enemies) {
+        enemies.forEach((enemy) => {
+            if (this.#isInTheZone(enemy)) {
+                if(!this.#target){
+                    this.#target = enemy;
+                }
+            }
+        });
+    }
+
+    shootEnemy() {
+        if(this.target && this.#isInTheZone(this.target)){
+            console.log(`TARGET: x: ${this.target.x}, y: ${this.target.y}`);
+        }
+        else {
+            console.log("Lose sight of target");
+            this.target = null;
+        }
+    }
+
+    #isInTheZone(enemy) {
+        return enemy.x <= this.x + this.range &&
+            enemy.x >= this.x - this.range &&
+            enemy.y <= this.y + this.range &&
+            enemy.y >= this.y - this.range
+    }
+
+    #adjustX(x) {
         const col = Math.floor(x / TILE_SIZE);
         return col * TILE_SIZE + TILE_SIZE / 2;
     }
 
-    #adjustY(y){
+    #adjustY(y) {
         const row = Math.floor(y / TILE_SIZE);
         return row * TILE_SIZE + TILE_SIZE / 2;
     }
@@ -53,5 +80,12 @@ export class Tower {
     set shootSpeed(value) {
         this.#shootSpeed = value;
     }
-}
 
+    get target() {
+        return this.#target;
+    }
+
+    set target(value) {
+        this.#target = value;
+    }
+}

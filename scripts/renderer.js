@@ -1,5 +1,6 @@
 import { ENEMY_SIZE, TILE_SIZE, TOWER_SIZE } from "./config.js";
 
+let bulletSpeed = 1
 export function drawGrid(ctx, width, height) {
     ctx.strokeStyle = "black";
     for (let x = 0; x <= width; x += TILE_SIZE) {
@@ -69,6 +70,22 @@ export function drawTowerRadius(ctx, xPos, yPos) {
     ctx.setLineDash([]);
 
     ctx.restore();
+}
+
+export function drawTowerBullets(ctx, xSource, ySource, xDestination, yDestination){
+    ctx.globalCompositeOperation = "source-over";
+    ctx.beginPath();
+    ctx.setLineDash([bulletSpeed, 15]);
+
+    bulletSpeed += 0.25;
+    
+    bulletSpeed = bulletSpeed > 5 ? bulletSpeed = 0 : bulletSpeed;
+
+    ctx.moveTo(xSource, ySource);
+    ctx.lineTo(xDestination, yDestination);
+    ctx.stroke();
+
+    ctx.setLineDash([]);
 }
 
 export function animateFps(callbackFn, fps = 60) {
