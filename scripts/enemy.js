@@ -12,6 +12,33 @@ export class Enemy {
         this.#health = health;
     }
 
+    moveToBase(moves){
+        if (this.currentMoveIndex >= moves.length) return;
+
+        const move = moves[this.currentMoveIndex];
+
+        const targetX = move.col * TILE_SIZE + TILE_SIZE / 2;
+        const targetY = move.row * TILE_SIZE + TILE_SIZE / 2;
+
+        const dx = targetX - this.x;
+        const dy = targetY - this.y;
+
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < this.speed) {
+            this.x = targetX;
+            this.y = targetY;
+            this.#currentMoveIndex++;
+        } else {
+            this.#x += (dx / distance) * this.speed;
+            this.#y += (dy / distance) * this.speed;
+        }
+    }
+
+    hasReachBase(){
+        return this.x === BASE_POS.row * TILE_SIZE + TILE_SIZE / 2 && this.y === BASE_POS.col * TILE_SIZE + TILE_SIZE / 2;
+    }
+
     get x() {
         return this.#x;
     }
@@ -51,31 +78,4 @@ export class Enemy {
     set health(value) {
         this.#health = value;
     }
-}
-
-export function moveEnemy(enemy, moves) {
-    if (enemy.currentMoveIndex >= moves.length) return;
-
-    const move = moves[enemy.currentMoveIndex];
-
-    const targetX = move.col * TILE_SIZE + TILE_SIZE / 2;
-    const targetY = move.row * TILE_SIZE + TILE_SIZE / 2;
-    
-    const dx = targetX - enemy.x;
-    const dy = targetY - enemy.y;
-
-    const distance = Math.sqrt(dx * dx + dy * dy);
-
-    if (distance < enemy.speed) {
-        enemy.x = targetX;
-        enemy.y = targetY;
-        enemy.currentMoveIndex++;
-    } else {
-        enemy.x += (dx / distance) * enemy.speed;
-        enemy.y += (dy / distance) * enemy.speed;
-    }
-}
-
-export function reachBase(enemy){
-    return enemy.x === BASE_POS.row * TILE_SIZE + TILE_SIZE / 2 && enemy.y === BASE_POS.col * TILE_SIZE + TILE_SIZE / 2;
 }

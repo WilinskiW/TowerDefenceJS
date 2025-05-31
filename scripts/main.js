@@ -11,7 +11,7 @@ import {
     TILE_SIZE,
     WIDTH
 } from "./config.js";
-import { Enemy, moveEnemy, reachBase } from "./enemy.js";
+import { Enemy } from "./enemy.js";
 import { findPath } from "./pathfinding.js";
 import { animateFps, drawEnemy, drawGameOver, drawGrid, drawMap, drawTower, drawTowerBullets } from "./renderer.js";
 import { WaveManager } from "./waveManager.js";
@@ -106,7 +106,7 @@ function drawScene() {
 
     if (baseHealth > 0) {
         enemies.forEach((enemy) => {
-            if (reachBase(enemy)) {
+            if (enemy.hasReachBase()) {
                 waveManager.removeEnemy(enemies, enemy);
                 baseHealth -= ENEMY_DAMAGE;
                 baseHealthEl.textContent = baseHealth;
@@ -118,7 +118,7 @@ function drawScene() {
                 goldCounter.textContent = goldSack.amountOfGold;
             }
 
-            moveEnemy(enemy, moves);
+            enemy.moveToBase(moves);
             drawEnemy(ctx, enemy.x, enemy.y);
         });
 
