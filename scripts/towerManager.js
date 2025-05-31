@@ -14,14 +14,20 @@ import { goldCounter } from "./main.js";
 export function handleTowerActions(e, towers, selectedButton, goldSack) {
     if (!selectedButton || goldSack.amountOfGold < minCost()) return;
 
-    const mouseX = e.clientX - canvas.offsetLeft;
-    const mouseY = e.clientY - canvas.offsetTop;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    const mouseX = (e.clientX - rect.left) * scaleX;
+    const mouseY = (e.clientY - rect.top) * scaleY;
 
     const col = Math.floor(mouseX / TILE_SIZE);
     const row = Math.floor(mouseY / TILE_SIZE);
 
     const x = col * TILE_SIZE + TILE_SIZE / 2;
     const y = row * TILE_SIZE + TILE_SIZE / 2;
+
+    console.log(`X: ${mouseX}, Y: ${mouseY}`);
 
     if (selectedButton.id === "tower" && goldSack.amountOfGold >= NEW_TOWER_COST) {
         placeTower(x, y, towers, row, col, mouseX, mouseY, goldSack);
