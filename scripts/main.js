@@ -1,16 +1,61 @@
 "use strict"
 
-import { BASE_HEALTH, gameMap, HEIGHT, SPAWN_POS, START_GOLD, WIDTH } from "./config.js";
-import { moveEnemy, reachBase } from "./enemy.js";
+import {
+    AUTOSAVE_TIME_MS,
+    BASE_HEALTH,
+    ENEMY_DAMAGE,
+    gameMap,
+    HEIGHT,
+    SPAWN_POS,
+    START_GOLD,
+    TILE_SIZE,
+    WIDTH
+} from "./config.js";
+import { Enemy, moveEnemy, reachBase } from "./enemy.js";
 import { findPath } from "./pathfinding.js";
 import { animateFps, drawEnemy, drawGameOver, drawGrid, drawMap, drawTower, drawTowerBullets } from "./renderer.js";
 import { WaveManager } from "./waveManager.js";
 import { handleTowerActions } from "./towerManager.js";
 import { GoldSack } from "./goldSack.js";
+import { Tower } from "./tower.js";
 
 let goldSack = new GoldSack();
 let waveManager = new WaveManager();
 let baseHealth = BASE_HEALTH;
+let enemies = [];
+let towers = [];
+const moves = findPath(SPAWN_POS.row, SPAWN_POS.col);
+
+const saved = localStorage.getItem("save");
+if (saved) {
+    const data = JSON.parse(saved);
+    goldSack.amountOfGold = data.gold;
+    baseHealth = data.baseHealth;
+    waveManager.wave = data.wave;
+    waveManager.addedEnemies = data.addedEnemies;
+
+    enemies = data.enemies.map(e => {
+        const enemy = new Enemy(e.speed, e.health);
+        enemy.currentMoveIndex = e.currentMoveIndex;
+
+        const currentMove = moves[e.currentMoveIndex];
+        if (currentMove) {
+            enemy.x = currentMove.col * TILE_SIZE + TILE_SIZE / 2;
+            enemy.y = currentMove.row * TILE_SIZE + TILE_SIZE / 2;
+        }
+
+        return enemy;
+    });
+
+    towers = data.towers.map(t => {
+        const tower = new Tower(t.x, t.y);
+        tower.range = t.range;
+        tower.attackSpeed = t.attackSpeed;
+        tower.damage = t.damage;
+        tower.tier = t.tier;
+        return tower;
+    });
+}
 
 const waveCounter = document.getElementById("wave");
 waveCounter.textContent = waveManager.wave;
@@ -46,27 +91,24 @@ canvas.width = WIDTH;
 canvas.height = HEIGHT;
 const ctx = canvas.getContext("2d");
 
-const moves = findPath(SPAWN_POS.row, SPAWN_POS.col);
 let animationController;
-let enemies = [];
-let towers = [];
 
 startGame();
 
-function startGame(){
+function startGame() {
     waveManager.startEnemyWaves(enemies, (newWave) => waveCounter.textContent = newWave);
     animationController = animateFps(() => drawScene(), 60);
 }
 
 function drawScene() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(backgroundCanvas, 0, 0); 
+    ctx.drawImage(backgroundCanvas, 0, 0);
 
     if (baseHealth > 0) {
         enemies.forEach((enemy) => {
             if (reachBase(enemy)) {
                 waveManager.removeEnemy(enemies, enemy);
-                baseHealth -= 20;
+                baseHealth -= ENEMY_DAMAGE;
                 baseHealthEl.textContent = baseHealth;
             }
 
@@ -95,16 +137,48 @@ function drawScene() {
     }
 }
 
-function resetGame(){
+setInterval(() => saveGame(), AUTOSAVE_TIME_MS);
+
+function resetGame() {
+    localStorage.removeItem("save");
     goldSack.amountOfGold = START_GOLD;
     baseHealth = BASE_HEALTH;
     animationController.stop();
-    waveManager.wave = 1;
+    waveManager = new WaveManager();
     enemies = [];
     towers = [];
+    goldCounter.textContent = goldSack.amountOfGold;
     waveCounter.textContent = waveManager.wave;
     baseHealthEl.textContent = baseHealth;
     startGame();
+}
+
+function saveGame() {
+    const gameData = {
+        gold: goldSack.amountOfGold,
+        baseHealth: baseHealth,
+        wave: waveManager.wave,
+        addedEnemies: waveManager.addedEnemies,
+        enemies: enemies.map(e => ({
+            x: e.x,
+            y: e.y,
+            currentMoveIndex: e.currentMoveIndex,
+            speed: e.speed,
+            health: e.health
+
+
+        })),
+        towers: towers.map((t) => ({
+            x: t.x,
+            y: t.y,
+            range: t.range,
+            attackSpeed: t.attackSpeed,
+            damage: t.damage,
+            tier: t.tier
+        })),
+    }
+
+    localStorage.setItem("save", JSON.stringify(gameData));
 }
 
 // debounce click
@@ -115,3 +189,5 @@ canvas.addEventListener("click", (e) => {
 });
 
 resetBtn.addEventListener("click", () => resetGame());
+
+saveBtn.addEventListener("click", () => saveGame());
