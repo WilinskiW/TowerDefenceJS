@@ -1,4 +1,5 @@
 import { TILE_SIZE, TOWER_SIZE } from "./config.js";
+
 export class Tower {
     #x;
     #y;
@@ -15,10 +16,8 @@ export class Tower {
 
     findTarget(enemies) {
         enemies.forEach((enemy) => {
-            if (this.#isInTheZone(enemy)) {
-                if (!this.#target) {
-                    this.#target = enemy;
-                }
+            if (this.#isInTheZone(enemy) && !this.#target) {
+                this.#target = enemy;
             }
         });
     }

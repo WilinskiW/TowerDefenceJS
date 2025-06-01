@@ -69,8 +69,18 @@ baseHealthEl.textContent = baseHealth;
 const buttons = document.getElementById("actions");
 let selectedButton;
 buttons.childNodes.forEach(btn => {
-    btn.addEventListener("click", () => selectedButton = btn);
-})
+    if (btn.nodeType === Node.ELEMENT_NODE) { // Ensure it's an element node
+        btn.addEventListener("click", () => {
+            buttons.childNodes.forEach(b => {
+                if (b.nodeType === Node.ELEMENT_NODE) b.classList.remove("selected");
+            });
+
+            btn.classList.add("selected");
+
+            selectedButton = btn;
+        });
+    }
+});
 
 const resetBtn = document.getElementById("reset");
 const saveBtn = document.getElementById("save");
@@ -185,7 +195,11 @@ function saveGame() {
 let debounceClick;
 canvas.addEventListener("click", (e) => {
     clearTimeout(debounceClick);
-    debounceClick = setTimeout(() => handleTowerActions(e, towers, selectedButton, goldSack), 200); // 200ms
+    debounceClick = setTimeout(() => {
+        handleTowerActions(e, towers, selectedButton, goldSack);
+        selectedButton.classList.remove("selected");
+        selectedButton = undefined;
+    }, 200); // 200ms
 });
 
 resetBtn.addEventListener("click", () => resetGame());

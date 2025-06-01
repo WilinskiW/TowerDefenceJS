@@ -29,7 +29,7 @@ body {
   border-radius: 8px;
 }
 
-i {
+.params i {
   font-size: 20px;
 }
 
@@ -81,15 +81,48 @@ p {
 }
 
 button {
+  width: 50%;
   font-family: "Quantico", sans-serif;
   display: block;
   border: solid 1px;
   border-radius: 12px;
-  padding: 4px;
+  padding: 0.75rem;
   font-size: 16px;
-  background-color: #54d132;
-  width: fit-content;
-  margin-bottom: 0.5rem;
+  background-color: rgb(26, 26, 28);
+  color: whitesmoke;
+  transition: background-color 0.3s, color 0.3s;
+  margin: 0.5rem;
+}
+
+button:hover {
+  background-color: whitesmoke;
+  color: rgb(26, 26, 28);
+}
+
+.selected {
+  background-color: whitesmoke;
+  color: rgb(26, 26, 28);
+}
+
+.actions, .options {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+#save:hover {
+  background-color: #0BDA51;
+  color: rgb(26, 26, 28);
+}
+
+#reset:hover {
+  background-color: #DA2C43;
+  color: rgb(26, 26, 28);
 }
 
 /*# sourceMappingURL=style.css.map */
