@@ -1,75 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 body {
-  font-family: "Quantico", sans-serif;
+  font-family: "Quantico", "sans-serif";
   font-size: 16px;
-  background-color: rgb(26, 26, 28);
-  background-image: linear-gradient(119deg, rgb(26, 26, 28) 10%, rgb(21, 22, 26) 100%);
+  background-image: linear-gradient(119deg, #1a1a1c 10%, #15161a 100%);
   color: whitesmoke;
-}
-
-.game-container {
-  display: flex;
-}
-
-#scene {
-  width: 100%;
-  height: 95vh;
-  margin: 0.25rem 0 0.25rem 0;
-  max-width: 1100px;
-  border: 2px solid black;
-  display: block;
-}
-
-.params {
-  display: flex;
-  text-align: center;
-  font-size: 20px;
-  background-image: linear-gradient(60deg, rgb(26, 26, 28) 10%, rgb(21, 22, 26) 100%);
-  border: 2px solid;
-  border-radius: 8px;
-}
-
-.params i {
-  font-size: 20px;
-}
-
-.left-param, .central-param, .right-param {
-  width: 33.3%;
-  padding: 0.5rem;
-}
-
-p {
-  display: flex;
-  flex-direction: column;
-}
-
-.central-param {
-  flex-grow: 2;
-  border: solid;
-  border-top: 1px;
-  border-bottom: 1px;
-}
-
-.left-param, .right-param {
-  flex-grow: 1;
-}
-
-.fa-hashtag {
-  color: #2D68C4;
-}
-
-.fa-heart {
-  color: #DA2C43;
-}
-
-.fa-coins {
-  color: #EFBF04;
-}
-
-.info {
-  width: 100%;
-  max-width: 600px;
-  padding: 10px;
 }
 
 h1 {
@@ -80,28 +14,70 @@ p {
   margin: 2px;
 }
 
+.game-container {
+  display: flex;
+  flex-direction: row;
+}
+
+#scene {
+  width: 100%;
+  height: 95vh;
+  margin: 0.25rem 0;
+  max-width: 1100px;
+  border: 2px solid black;
+  display: block;
+}
+
+.info {
+  width: 100%;
+  max-width: 600px;
+  padding: 0.5rem;
+}
+
+.params {
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  font-size: 20px;
+  border: 2px solid;
+  border-radius: 8px;
+}
+.params p {
+  width: 33.3%;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.fa-heart {
+  color: #DA2C43;
+}
+
+.fa-coins {
+  color: #EFBF04;
+}
+
 button {
   width: 50%;
-  font-family: "Quantico", sans-serif;
+  font-family: "Quantico", "sans-serif";
   display: block;
   border: solid 1px;
   border-radius: 12px;
   padding: 0.75rem;
   font-size: 16px;
-  background-color: rgb(26, 26, 28);
+  background-color: #1a1a1c;
   color: whitesmoke;
   transition: background-color 0.3s, color 0.3s;
   margin: 0.5rem;
 }
-
 button:hover {
   background-color: whitesmoke;
-  color: rgb(26, 26, 28);
+  color: #1a1a1c;
+  cursor: pointer;
 }
-
-.selected {
+button.selected {
   background-color: whitesmoke;
-  color: rgb(26, 26, 28);
+  color: #1a1a1c;
 }
 
 .actions, .options {
@@ -111,18 +87,14 @@ button:hover {
   align-items: center;
 }
 
-button:hover {
-  cursor: pointer;
-}
-
 #save:hover {
   background-color: #0BDA51;
-  color: rgb(26, 26, 28);
+  color: #1a1a1c;
 }
 
 #reset:hover {
   background-color: #DA2C43;
-  color: rgb(26, 26, 28);
+  color: #1a1a1c;
 }
 
 /*# sourceMappingURL=style.css.map */

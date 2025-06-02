@@ -1,0 +1,50 @@
+@use "sass:map";
+@use "sass:color";
+@use "sass:math";
+@use "sass:list";
+
+@import url('https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+// Font
+$font-family: "Quantico", "sans-serif";
+
+// Kolory
+$colors: (
+        coins: #EFBF04,
+        success: #0BDA51,
+        accent: #DA2C43,
+        dark: #1a1a1c,
+        light: whitesmoke
+);
+
+// Tło
+$background: linear-gradient(119deg, #1a1a1c 10%, #15161a 100%);
+
+// Inne zmienne
+$spacings: (s: 0.5rem, m: 1rem, l: 2rem);
+$iconSize: 20px;
+$breakpoints: (sm: 576px, md: 768px, lg: 992px);
+$radius: 4px;
+$transition: 0.3s;
+
+// Funkcje
+@function color($key) {
+  @return map-get($colors, $key);
+}
+
+@function spacing($key) {
+  @return map-get($spacings, $key);
+}
+
+// Mixiny
+@mixin flex($direction: row) {
+  display: flex;
+  flex-direction: $direction;
+}
+
+@mixin hover-effect($property, $value) {
+  transition: $property $transition;
+  &:hover {
+    #{$property}: $value;
+  }
+}
