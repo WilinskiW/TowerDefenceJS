@@ -11,6 +11,13 @@ import {
 import { Tower } from "./tower.js";
 import { goldCounter } from "./main.js";
 
+/**
+ * Funkcja wykonuję akcję wybrane przez użytkownik (Budowa nowej wieży, ulepszenie istniejącej)
+ * @param e {MouseEvent} Informacje o event'cie
+ * @param towers {Tower[]} Wszystkie wieże dostępne na mapie
+ * @param selectedButton {HTMLButtonElement} Wciśnięty przycisk
+ * @param goldSack {GoldSack} Stan złota gracza
+ */
 export function handleTowerActions(e, towers, selectedButton, goldSack) {
     if (!selectedButton || goldSack.amountOfGold < minCost()) return;
 
@@ -36,6 +43,17 @@ export function handleTowerActions(e, towers, selectedButton, goldSack) {
     }
 }
 
+/**
+ * Funkcja umieszcza nową wieżę na mapie, jeśli jest miejsce i gracz ma wystarczająco złota
+ * @param {number} x Pozycja x na planszy (środek kafelka)
+ * @param {number} y Pozycja y na planszy (środek kafelka)
+ * @param {Tower[]} towers Wszystkie wieże dostępne na mapie
+ * @param {number} row Indeks wiersza w mapie gry
+ * @param {number} col Indeks kolumny w mapie gry
+ * @param {number} rawX Dokładna pozycja x kursora myszy
+ * @param {number} rawY Dokładna pozycja y kursora myszy
+ * @param {GoldSack} goldSack Stan złota gracza
+ */
 function placeTower(x, y, towers, row, col, rawX, rawY, goldSack) {
     if (findTowerByCoordinate(x, y, towers).length === 0 && gameMap[row][col] === 0) {
         towers.push(new Tower(rawX, rawY));
@@ -43,6 +61,14 @@ function placeTower(x, y, towers, row, col, rawX, rawY, goldSack) {
     }
 }
 
+/**
+ * Funkcja ulepsza wybraną wieżę (uszkodzenia, zasięg, szybkość ataku), jeśli gracz ma wystarczająco złota
+ * @param {number} x Pozycja x na planszy (środek kafelka)
+ * @param {number} y Pozycja y na planszy (środek kafelka)
+ * @param {Tower[]} towers Wszystkie wieże dostępne na mapie
+ * @param {string} upgradeType Typ ulepszenia: "damage", "range" lub "speed"
+ * @param {GoldSack} goldSack Stan złota gracza
+ */
 function upgradeTower(x, y, towers, upgradeType, goldSack) {
     const foundTower = findTowerByCoordinate(x, y, towers);
     if (foundTower.length === 1 && foundTower[0].tier <= 3) {
@@ -71,11 +97,23 @@ function upgradeTower(x, y, towers, upgradeType, goldSack) {
     }
 }
 
+/**
+ * Funkcja zmniejsza ilość złota gracza i aktualizuje licznik na stronie
+ * @param {GoldSack} goldSack Stan złota gracza, powinien mieć właściwość `amountOfGold`
+ * @param {number} toTake Ilość złota do odjęcia
+ */
 function spendGold(goldSack, toTake){
     goldSack.amountOfGold -= toTake;
     goldCounter.textContent = goldSack.amountOfGold;
 }
 
+/**
+ * Znajduje wieże na danej pozycji (x, y)
+ * @param {number} x Pozycja x na planszy (środek kafelka)
+ * @param {number} y Pozycja y na planszy (środek kafelka)
+ * @param {Tower[]} towers Wszystkie wieże dostępne na mapie
+ * @returns {Tower[]} Tablica wież znalezionych na podanej pozycji
+ */
 function findTowerByCoordinate(x, y, towers) {
     return towers.filter(tower => tower.x === x && tower.y === y);
 }

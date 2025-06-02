@@ -3,13 +3,28 @@ import { ENEMY_DEFAULT_SPEED, SPAWN_INTERVAL_TIME_MS, WAVE_BREAK_TIME_MS } from 
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+/**
+ * Klasa zarządzająca falami przeciwników w grze.
+ * Generuje przeciwników, nadzoruje ich pojawianie się i informuje o zakończeniu fali.
+ */
 export class WaveManager {
+    /** @type {number} Aktualna fala */
     #wave = 1;
+
+    /** @type {number} Liczba dodanych przeciwników w aktualnej fali */
     #addedEnemies = 0;
+
+    /** @type {boolean} Czy fala aktualnie trwa */
     #waveRunning = false;
 
     constructor() {}
 
+    /**
+     * Uruchamia fale przeciwników.
+     * @param {Enemy[]} enemiesArray Tablica, do której dodawani są nowi przeciwnicy.
+     * @param {(wave: number) => void} onWaveEnd Funkcja wywoływana po zakończeniu każdej fali.
+     * @returns {Promise<void>}
+     */
     async startEnemyWaves(enemiesArray, onWaveEnd) {
         if (this.#waveRunning) return;
         this.#waveRunning = true;
@@ -47,6 +62,11 @@ export class WaveManager {
         }
     }
 
+    /**
+     * Usuwa przeciwnika z tablicy.
+     * @param {Enemy[]} enemies Tablica aktywnych przeciwników.
+     * @param {Enemy} enemy Przeciwnik do usunięcia.
+     */
     removeEnemy(enemies, enemy) {
         try {
             const updatedEnemies = enemies.filter(e => e !== enemy);
@@ -56,18 +76,34 @@ export class WaveManager {
         }
     }
 
+    /**
+     * Zwraca liczbę dodanych przeciwników w aktualnej fali.
+     * @returns {number}
+     */
     get addedEnemies() {
         return this.#addedEnemies;
     }
 
+    /**
+     * Ustawia liczbę dodanych przeciwników.
+     * @param {number} value
+     */
     set addedEnemies(value) {
         this.#addedEnemies = value;
     }
 
+    /**
+     * Zwraca numer aktualnej fali.
+     * @returns {number}
+     */
     get wave() {
         return this.#wave;
     }
 
+    /**
+     * Ustawia numer aktualnej fali.
+     * @param {number} value
+     */
     set wave(value) {
         this.#wave = value;
     }

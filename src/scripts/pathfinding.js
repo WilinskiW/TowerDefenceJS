@@ -1,5 +1,13 @@
 import { BASE_POS, gameMap, TILE_SIZE } from "./config.js";
 
+/**
+ * Funkcje reprezentuje algorytm wyszukujący ścieżkę do bazy dla przeciwników.
+ * Algorytm działa dla ścieżek o szerokości równej 1.
+ * Jeżeli po 100 ruchach algorytm nie znajdzie ścieżki do zostanie wyrzucony błąd.
+ * @param {number} startRow Początkowa pozycja wiersza (Spawn przeciwników)
+ * @param {number} startCol Początkowa pozycja kolumny (Spawn przeciwników)
+ * @returns {[]} Zwraca tablicę ruchów do dotarcie do celu
+ */
 export function findPath(startRow, startCol) {
     const moves = [];
 

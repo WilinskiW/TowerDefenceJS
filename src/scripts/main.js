@@ -1,5 +1,17 @@
 "use strict";
 
+/**
+ * Główna logika gry typu Tower Defense.
+ * Inicjalizuje grę, rysuje scenę, zarządza falami przeciwników i zapisuje stan gry.
+ *
+ * Obsługuje:
+ * - Inicjalizację wież i przeciwników
+ * - Przechowywanie i wczytywanie stanu gry z `localStorage`
+ * - Obsługę kliknięć użytkownika
+ * - Automatyczne rysowanie sceny gry
+ * - Główną pętlę: fale przeciwników i obrażenia bazy
+ */
+
 import {
     AUTOSAVE_TIME_MS,
     BASE_HEALTH,
@@ -27,6 +39,10 @@ let towers = [];
 let showRadius = true;
 const moves = findPath(SPAWN_POS.row, SPAWN_POS.col);
 
+/**
+ * Ładuje stan gry z `localStorage`, jeśli istnieje.
+ * Odtwarza przeciwników i wieże z zachowanymi statystykami.
+ */
 const saved = localStorage.getItem("save");
 if (saved) {
     const data = JSON.parse(saved);
@@ -110,11 +126,18 @@ let animationController;
 
 startGame();
 
+/**
+ * Rozpoczyna grę, uruchamia fale przeciwników i animację sceny.
+ */
 function startGame() {
     waveManager.startEnemyWaves(enemies, (newWave) => waveCounter.textContent = newWave);
     animationController = animateFps(() => drawScene(), 60);
 }
 
+/**
+ * Rysuje całą scenę gry: tło, wieże, przeciwników, pociski.
+ * Obsługuje logikę kolizji i obrażeń.
+ */
 function drawScene() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(backgroundCanvas, 0, 0);
@@ -154,6 +177,9 @@ function drawScene() {
 
 setInterval(() => saveGame(), AUTOSAVE_TIME_MS);
 
+/**
+ * Resetuje stan gry do wartości początkowych oraz usuwa zapis z `localStorage`.
+ */
 function resetGame() {
     localStorage.removeItem("save");
     goldSack.amountOfGold = START_GOLD;
@@ -168,6 +194,10 @@ function resetGame() {
     startGame();
 }
 
+/**
+ * Zapisuje stan gry do `localStorage`, w tym:
+ * ilość złota, zdrowie bazy, przeciwników, wieże, falę.
+ */
 function saveGame() {
     const gameData = {
         gold: goldSack.amountOfGold,
@@ -196,6 +226,11 @@ function saveGame() {
     localStorage.setItem("save", JSON.stringify(gameData));
 }
 
+/**
+ * Obsługuje kliknięcia na canvasie.
+ * Debounce zapobiega wielokrotnemu wywołaniu w krótkim czasie.
+ * W zależności od przycisku, wykonuje odpowiednią akcję (budowa / ulepszenie wieży).
+ */
 // debounce click
 let canvasDebounceClick;
 canvas.addEventListener("click", (e) => {
@@ -207,10 +242,19 @@ canvas.addEventListener("click", (e) => {
     }, 200); // 200ms
 });
 
+/**
+ * Resetuje grę do stanu początkowego po kliknięciu przycisku "Reset".
+ */
 resetBtn.addEventListener("click", () => resetGame());
 
+/**
+ * Włącza/wyłącza wyświetlanie zasięgu wież.
+ */
 radiusBtn.addEventListener("click", () => showRadius = !showRadius);
 
+/**
+ * Ręcznie zapisuje stan gry po kliknięciu "Zapisz".
+ */
 let saveDebounceClick;
 saveBtn.addEventListener("click", () => {
     saveBtn.textContent = "Zapisano...";
