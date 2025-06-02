@@ -16,7 +16,13 @@ p {
 }
 
 .game-container {
-  @include flex;
+  @include flex(column-reverse);
+}
+
+@media all and (min-width: 850px) {
+  .game-container {
+    @include flex;
+  }
 }
 
 #scene {
@@ -30,7 +36,7 @@ p {
 
 .info {
   width: 100%;
-  max-width: 600px;
+  max-width: 850px;
   padding: spacing(s);
 }
 
