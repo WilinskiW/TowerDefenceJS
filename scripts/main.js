@@ -24,6 +24,7 @@ let waveManager = new WaveManager();
 let baseHealth = BASE_HEALTH;
 let enemies = [];
 let towers = [];
+let showRadius = true;
 const moves = findPath(SPAWN_POS.row, SPAWN_POS.col);
 
 const saved = localStorage.getItem("save");
@@ -83,8 +84,12 @@ buttons.childNodes.forEach(btn => {
 });
 
 const resetBtn = document.getElementById("reset");
+
 const saveBtn = document.getElementById("save");
 const saveBtnContent = saveBtn.innerHTML;
+
+const radiusBtn = document.getElementById("radius");
+
 // Prepare static grid and map
 const backgroundCanvas = document.createElement("canvas");
 backgroundCanvas.width = WIDTH;
@@ -140,7 +145,7 @@ function drawScene() {
             } else {
                 tower.findTarget(enemies);
             }
-            drawTower(ctx, tower.x, tower.y, tower.range, true);
+            drawTower(ctx, tower.x, tower.y, tower.range, showRadius);
         });
     } else {
         drawGameOver(ctx);
@@ -203,6 +208,8 @@ canvas.addEventListener("click", (e) => {
 });
 
 resetBtn.addEventListener("click", () => resetGame());
+
+radiusBtn.addEventListener("click", () => showRadius ? showRadius = false : showRadius = true);
 
 let saveDebounceClick;
 saveBtn.addEventListener("click", () => {
