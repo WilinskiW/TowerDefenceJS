@@ -84,7 +84,7 @@ buttons.childNodes.forEach(btn => {
 
 const resetBtn = document.getElementById("reset");
 const saveBtn = document.getElementById("save");
-
+const saveBtnContent = saveBtn.innerHTML;
 // Prepare static grid and map
 const backgroundCanvas = document.createElement("canvas");
 backgroundCanvas.width = WIDTH;
@@ -192,10 +192,10 @@ function saveGame() {
 }
 
 // debounce click
-let debounceClick;
+let canvasDebounceClick;
 canvas.addEventListener("click", (e) => {
-    clearTimeout(debounceClick);
-    debounceClick = setTimeout(() => {
+    clearTimeout(canvasDebounceClick);
+    canvasDebounceClick = setTimeout(() => {
         handleTowerActions(e, towers, selectedButton, goldSack);
         selectedButton.classList.remove("selected");
         selectedButton = undefined;
@@ -204,4 +204,12 @@ canvas.addEventListener("click", (e) => {
 
 resetBtn.addEventListener("click", () => resetGame());
 
-saveBtn.addEventListener("click", () => saveGame());
+let saveDebounceClick;
+saveBtn.addEventListener("click", () => {
+    saveBtn.textContent = "Zapisano...";
+    clearTimeout(saveDebounceClick);
+    saveDebounceClick = setTimeout(() => {
+        saveGame();
+        saveBtn.innerHTML = saveBtnContent;
+    }, 500);
+});
