@@ -1,42 +1,59 @@
 import { Enemy } from "./enemy.js";
 import { ENEMY_DEFAULT_SPEED, SPAWN_INTERVAL_TIME_MS, WAVE_BREAK_TIME_MS } from "./config.js";
 
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 export class WaveManager {
     #wave = 1;
     #addedEnemies = 0;
-    
+    #waveRunning = false;
+
     constructor() {}
 
-    startEnemyWaves(enemiesArray, onWaveEnd) {
-        if(this.#addedEnemies === this.#wave * 10) return
+    async startEnemyWaves(enemiesArray, onWaveEnd) {
+        if (this.#waveRunning) return;
+        this.#waveRunning = true;
 
-        const spawnInterval = setInterval(() => {
-            if (this.#addedEnemies >= this.#wave * 10) {
-                clearInterval(spawnInterval);
+        try {
+            const maxEnemies = this.#wave * 10;
 
-                const checkIfWaveOver = setInterval(() => {
-                    if (enemiesArray.length === 0) {
-                        clearInterval(checkIfWaveOver);
-                        this.#addedEnemies++;
-                        this.#wave++; 
-                        setTimeout(() => {
-                            onWaveEnd(this.#wave);
-                            this.startEnemyWaves(enemiesArray, onWaveEnd);
-                            this.#addedEnemies = 0;
-                        }, WAVE_BREAK_TIME_MS);
-                    }
-                }, SPAWN_INTERVAL_TIME_MS);
+            while (this.#addedEnemies < maxEnemies) {
+                const newEnemy = new Enemy(
+                    ENEMY_DEFAULT_SPEED + this.#wave / 2,
+                    100 * this.#wave
+                );
+                enemiesArray.push(newEnemy);
+                this.#addedEnemies++;
 
-                return;
+                await delay(1000);
             }
 
-            enemiesArray.push(new Enemy(ENEMY_DEFAULT_SPEED + this.#wave / 2, 100 * this.#wave));
-            this.#addedEnemies++;
-        }, 1000);
+            while (enemiesArray.length > 0) {
+                await delay(SPAWN_INTERVAL_TIME_MS);
+            }
+
+            this.#addedEnemies = 0;
+            this.#wave++;
+            this.#waveRunning = false;
+
+            await delay(WAVE_BREAK_TIME_MS);
+            onWaveEnd(this.#wave);
+
+            this.startEnemyWaves(enemiesArray, onWaveEnd);
+            
+        } catch (err) {
+            console.error("Błąd podczas uruchamiania fali:", err);
+            this.#waveRunning = false;
+        }
     }
 
-    removeEnemy(enemies, enemy){
-        enemies.splice(0, enemies.length, ...enemies.filter(enemyEl => enemyEl !== enemy));
+    removeEnemy(enemies, enemy) {
+        try {
+            const updatedEnemies = enemies.filter(e => e !== enemy);
+            enemies.splice(0, enemies.length, ...updatedEnemies);
+        } catch (err) {
+            console.error("Błąd podczas usuwania przeciwnika:", err);
+        }
     }
 
     get addedEnemies() {

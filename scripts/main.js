@@ -140,7 +140,7 @@ function drawScene() {
         towers.forEach((tower) => {
             if (tower.target) {
                 tower.shootEnemy();
-                if (tower.target)
+                if (tower.target) // Double "if" because tower can lose sight of the target, because enemy is consistently moving
                     drawTowerBullets(ctx, tower.x, tower.y, tower.target.x, tower.target.y, tower.attackSpeed);
             } else {
                 tower.findTarget(enemies);
@@ -209,7 +209,7 @@ canvas.addEventListener("click", (e) => {
 
 resetBtn.addEventListener("click", () => resetGame());
 
-radiusBtn.addEventListener("click", () => showRadius ? showRadius = false : showRadius = true);
+radiusBtn.addEventListener("click", () => showRadius = !showRadius);
 
 let saveDebounceClick;
 saveBtn.addEventListener("click", () => {
