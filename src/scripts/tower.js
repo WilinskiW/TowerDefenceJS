@@ -46,7 +46,7 @@ export class Tower {
         return enemy.x <= this.x + this.range &&
             enemy.x >= this.x - this.range &&
             enemy.y <= this.y + this.range &&
-            enemy.y >= this.y - this.range
+            enemy.y >= this.y - this.range;
     }
 
     #adjustX(x) {

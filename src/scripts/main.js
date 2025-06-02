@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 import {
     AUTOSAVE_TIME_MS,
@@ -19,7 +19,7 @@ import { handleTowerActions } from "./towerManager.js";
 import { GoldSack } from "./goldSack.js";
 import { Tower } from "./tower.js";
 
-let goldSack = new GoldSack();
+const goldSack = new GoldSack();
 let waveManager = new WaveManager();
 let baseHealth = BASE_HEALTH;
 let enemies = [];
@@ -191,7 +191,7 @@ function saveGame() {
             damage: t.damage,
             tier: t.tier
         })),
-    }
+    };
 
     localStorage.setItem("save", JSON.stringify(gameData));
 }

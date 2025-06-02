@@ -12,7 +12,7 @@ export function findPath(startRow, startCol) {
             return false;
         }
         return previousMove.col === col && previousMove.row === row;
-    }
+    };
 
     let row = startRow;
     let col = startCol;

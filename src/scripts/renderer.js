@@ -1,6 +1,6 @@
 import { ENEMY_SIZE, TILE_SIZE, TOWER_SIZE } from "./config.js";
 
-let bulletSpeed = 1
+let bulletSpeed = 1;
 export function drawGrid(ctx) {
     ctx.globalCompositeOperation = "destination-over";
     ctx.strokeStyle = "black";

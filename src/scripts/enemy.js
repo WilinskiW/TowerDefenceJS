@@ -3,7 +3,7 @@ import { TILE_SIZE, SPAWN_POS, ENEMY_DEFAULT_SPEED, BASE_POS } from "./config.js
 export class Enemy {
     #x = SPAWN_POS.col * TILE_SIZE + TILE_SIZE / 2;
     #y = SPAWN_POS.row * TILE_SIZE + TILE_SIZE / 2;
-    #currentMoveIndex = 0
+    #currentMoveIndex = 0;
     #speed = ENEMY_DEFAULT_SPEED;
     #health = 100;
 
