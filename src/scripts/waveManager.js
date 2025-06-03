@@ -8,13 +8,21 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
  * Generuje przeciwników, nadzoruje ich pojawianie się i informuje o zakończeniu fali.
  */
 export class WaveManager {
-    /** @type {number} Aktualna fala */
+    /**
+     * Aktualna fala
+     * @type {number}
+     */
     #wave = 1;
 
-    /** @type {number} Liczba dodanych przeciwników w aktualnej fali */
+    /**
+     * Liczba dodanych przeciwników w aktualnej fali
+     * @type {number}*/
     #addedEnemies = 0;
 
-    /** @type {boolean} Czy fala aktualnie trwa */
+    /**
+     * Czy fala aktualnie trwa
+     * @type {boolean}
+     * */
     #waveRunning = false;
 
     constructor() {}

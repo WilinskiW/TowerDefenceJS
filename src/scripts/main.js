@@ -86,7 +86,7 @@ baseHealthEl.textContent = baseHealth;
 const buttons = document.getElementById("actions");
 let selectedButton;
 buttons.childNodes.forEach(btn => {
-    if (btn.nodeType === Node.ELEMENT_NODE) { // Ensure it's an element node
+    if (btn.nodeType === Node.ELEMENT_NODE) {
         btn.addEventListener("click", () => {
             buttons.childNodes.forEach(b => {
                 if (b.nodeType === Node.ELEMENT_NODE) b.classList.remove("selected");
