@@ -81,8 +81,7 @@ export class Enemy {
      * @returns {boolean} `true` jeśli przeciwnik jest na pozycji bazy, `false` w przeciwnym wypadku.
      */
     hasReachBase() {
-        return this.x === BASE_POS.col * TILE_SIZE + TILE_SIZE / 2 &&
-            this.y === BASE_POS.row * TILE_SIZE + TILE_SIZE / 2;
+        return this.x === BASE_POS.row * TILE_SIZE + TILE_SIZE / 2 && this.y === BASE_POS.col * TILE_SIZE + TILE_SIZE / 2;
     }
 
     /**

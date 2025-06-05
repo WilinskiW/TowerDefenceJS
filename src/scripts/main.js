@@ -234,6 +234,8 @@ function saveGame() {
 // debounce click
 let canvasDebounceClick;
 canvas.addEventListener("click", (e) => {
+    if(!selectedButton) return;
+    
     clearTimeout(canvasDebounceClick);
     canvasDebounceClick = setTimeout(() => {
         handleTowerActions(e, towers, selectedButton, goldSack);

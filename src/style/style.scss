@@ -2,7 +2,7 @@
 
 body {
   font-family: $font-family;
-  font-size: 16px;
+  font-size: 14px;
   background-image: $background;
   color: color(light);
 }
@@ -23,13 +23,25 @@ p {
   .game-container {
     @include flex;
   }
+
+  .info {
+    width: 40%;
+  }
+
+  #scene {
+    width: 60%;
+    max-height: 100vh !important;
+  }
+
+  button {
+    font-size: 16px;
+  }
 }
 
 #scene {
   width: 100%;
-  height: 95vh;
   margin: 0.25rem 0;
-  max-width: 1100px;
+  max-height: 50vh;
   border: 2px solid black;
   display: block;
 }
@@ -73,7 +85,6 @@ button {
   border: solid 1px;
   border-radius: 3 * $radius;
   padding: 0.75rem;
-  font-size: 16px;
   background-color: color(dark);
   color: color(light);
   transition: background-color $transition, color $transition;
