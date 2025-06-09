@@ -22,7 +22,7 @@ $background: linear-gradient(119deg, #1a1a1c 10%, #15161a 100%);
 
 // Inne zmienne
 $spacings: (s: 0.5rem, m: 1rem, l: 2rem);
-$iconSize: 20px;
+$iconSizes: (s: 14px, m:20px);
 $breakpoints: (sm: 576px, md: 768px, lg: 992px);
 $radius: 4px;
 $transition: 0.3s;
@@ -34,6 +34,10 @@ $transition: 0.3s;
 
 @function spacing($key) {
   @return map-get($spacings, $key);
+}
+
+@function iconSize($key) {
+  @return map-get($iconSizes, $key);
 }
 
 // Mixiny

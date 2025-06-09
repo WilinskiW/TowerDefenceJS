@@ -8,6 +8,7 @@ body {
 }
 
 h1 {
+  display: none;
   text-align: center;
 }
 
@@ -24,8 +25,13 @@ p {
     @include flex;
   }
 
+  h1 {
+    display: block;
+  }
+
   .info {
     width: 40%;
+    font-size: iconSize(m);
   }
 
   #scene {
@@ -56,7 +62,7 @@ p {
 .params {
   @include flex;
   text-align: center;
-  font-size: $iconSize;
+  font-size: iconSize(s);
   border: 2px solid;
   border-radius: 2 * $radius;
 
