@@ -29,9 +29,12 @@ p {
     display: block;
   }
 
+  .params {
+    font-size: iconSize(m) !important;
+  }
+
   .info {
     width: 40%;
-    font-size: iconSize(m);
   }
 
   #scene {
